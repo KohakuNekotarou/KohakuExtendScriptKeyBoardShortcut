@@ -1,0 +1,255 @@
+//========================================================================================
+//  
+//  $File: $
+//  
+//  Owner: 
+//  
+//  $Author: $
+//  
+//  $DateTime: $
+//  
+//  $Revision: $
+//  
+//  $Change: $
+//  
+//  Copyright 1997-2012 Adobe Systems Incorporated. All rights reserved.
+//  
+//  NOTICE:  Adobe permits you to use, modify, and distribute this file in accordance 
+//  with the terms of the Adobe license agreement accompanying it.  If you have received
+//  this file from a source other than Adobe, then your use, modification, or 
+//  distribution of it requires the prior written permission of Adobe.
+//  
+//========================================================================================
+
+#include "VCPlugInHeaders.h"
+
+// General includes:
+#include "MenuDef.fh"
+#include "ActionDef.fh"
+#include "ActionDefs.h"
+#include "AdobeMenuPositions.h"
+#include "LocaleIndex.h"
+#include "PMLocaleIds.h"
+#include "StringTable.fh"
+#include "ObjectModelTypes.fh"
+#include "ShuksanID.h"
+#include "ActionID.h"
+#include "CommandID.h"
+#include "WorkspaceID.h"
+#include "WidgetID.h"
+#include "BuildNumber.h"
+#include "PlugInModel_UIAttributes.h"
+
+#include "ScriptInfoTypes.fh"
+#include "AppFrameworkID.h"
+
+// Project includes:
+#include "ActionID.h" // for kMenuActionObjectScriptElement
+#include "KESSID.h"
+#include "GenericID.h"
+#include "ShuksanID.h"
+#include "TextID.h"
+#include "KESSScriptingDefs.h"
+
+
+#ifdef __ODFRC__
+
+/*  
+ * Plugin version definition.
+ */
+resource PluginVersion (kSDKDefPluginVersionResourceID)
+{
+	kTargetVersion,
+	kKESSPluginID,
+	kSDKDefPlugInMajorVersionNumber, kSDKDefPlugInMinorVersionNumber,
+	kSDKDefHostMajorVersionNumber, kSDKDefHostMinorVersionNumber,
+	kKESSCurrentMajorFormatNumber, kKESSCurrentMinorFormatNumber,
+	{ kInDesignProduct },
+	{ kWildFS },
+	kModelPlugIn,
+	kKESSVersion
+};
+
+/*  
+ * The ExtraPluginInfo resource adds extra information to the Missing Plug-in dialog
+ * that is popped when a document containing this plug-in's data is opened when
+ * this plug-in is not present. These strings are not translatable strings
+ * since they must be available when the plug-in isn't around. They get stored
+ * in any document that this plug-in contributes data to.
+ */
+resource ExtraPluginInfo(1)
+{
+	kKESSCompanyValue,			// Company name
+	kKESSMissingPluginURLValue,	// URL 
+	kKESSMissingPluginAlertValue,	// Missing plug-in alert text
+};
+
+/* 
+ * Boss class definitions.
+ */
+resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
+{{{
+		
+	Class
+	{
+		kKESSShortcutScriptProviderBoss,
+		kBaseScriptProviderBoss,
+		{
+			IID_ISCRIPTPROVIDER, kKESSShortcutScriptProviderImpl,
+		}
+	},
+
+	Class
+	{
+		kKESSShortcutScriptObjectBoss,
+		kBaseProxyScriptObjectBoss,
+		{
+			IID_ISCRIPT, kKESSShortcutScriptImpl,
+			IID_IINTDATA, kIntDataImpl,
+		}
+	},
+
+}}};
+
+/*  
+ * Implementation definition.
+ */
+resource FactoryList (kSDKDefFactoryListResourceID)
+{
+	kImplementationIDSpace,
+	{
+		#include "KESSFactoryList.h"
+	}
+};
+
+
+/*  
+ * Locale Indicies.
+ * The LocaleIndex should have indicies that point at your
+ * localizations for each language system that you are localized for.
+ */
+
+/*  
+ * String LocaleIndex.
+ */
+resource LocaleIndex ( kSDKDefStringsResourceID)
+{
+	kStringTableRsrcType,
+	{
+		kWildFS, k_enUS, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_enGB, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_deDE, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_frFR, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_esES, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_ptBR, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_svSE, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_daDK, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_nlNL, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_itIT, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_nbNO, kSDKDefStringsResourceID + index_enUS
+		kWildFS, k_fiFI, kSDKDefStringsResourceID + index_enUS
+		kInDesignJapaneseFS, k_jaJP, kSDKDefStringsResourceID + index_jaJP
+	}
+};
+
+resource LocaleIndex (kSDKDefStringsNoTransResourceID)
+{
+	kStringTableRsrcType,
+	{
+		kWildFS, k_Wild, kSDKDefStringsNoTransResourceID + index_enUS
+	}
+};
+
+// Strings not being localized
+resource StringTable (kSDKDefStringsNoTransResourceID + index_enUS)
+{
+	k_enUS,									// Locale Id
+	kEuropeanMacToWinEncodingConverter,		// Character encoding converter
+	{
+	}
+};
+
+/*  Scripting definition
+	In InDesign/InCopy, scripting resources are defined via ODFRez statements for cross-platform compatibility.
+*/
+resource VersionedScriptElementInfo(2)
+{
+	// Contexts
+	{
+        kFiredrakeScriptVersion, kCoreScriptManagerBoss, kInDesignAllLanguagesFS, k_Wild,
+		kFiredrakeScriptVersion, kCoreScriptManagerBoss, kInCopyAllLanguagesFS, k_Wild,
+	}
+	
+	// Elements
+	{
+		// ---------------------------------------------------------------------------------------
+		// Shortcut script provider
+		Provider
+		{
+			kKESSShortcutScriptProviderBoss, // provider boss ID
+			{
+				// Parent
+				Parent{ kMenuActionObjectScriptElement }, 
+
+				// Shortcut object.
+				// app.menuActions[0].kessShortcuts.count();
+				RepresentObject{ kKESSShortcutObjectScriptElement },
+
+				// Add shortcut.
+				// context = "DefaultContext";
+				// context = "TableContext";
+				// context = "TableObjectContext";
+				// context = "KBSCContext_XMLStructureContext";
+				// context = "FullScreenContext";
+				// context = "TextContext";
+				// app.menuActions[0].kessShortcuts.kessAdd(context, "Shift+Ctrl+Alt+F1");
+				CollectionMethod{ kKESSAddShortcutMethodScriptElement },
+			}
+		}
+		// Shortcut object
+		Object
+		{
+			kKESSShortcutObjectScriptElement, // Script element ID
+			c_KESSShortcut, // ScriptID
+			"KESS shortcut", // Name
+			"KESS shortcut", // Description
+			kKESSShortcutObject_CLSID, // Windows CLSID
+
+			c_KESShortcuts, // Collection
+			"KESS shortcuts", // Name
+			"KESS shortcuts", // Description
+			kKESShortcutsObject_CLSID, // Windows CLSID
+
+			kNonIDBasedObjectScriptElement, // base object script element ID
+			kBasicSuiteScriptElement,	// suite script element ID
+		}
+
+
+		Method
+		{
+			kKESSAddShortcutMethodScriptElement,
+			e_KESSAddShortcut,
+			"KESS add",
+			"Create a new shortcut.",
+			VoidType,
+			{ // list of method parameters.
+				p_KESSShortcutContextString, // Parameter's ScriptID.
+				"KESS shortcut context string", // Parameter's name.
+				"KESS shortcut context string.", // Parameter's description.
+				StringType, // Parameter's type.
+				kRequired, // kOptional or kRequired.
+
+				p_KESSShortcutString, // Parameter's ScriptID.
+				"KESS shortcut string", // Parameter's name.
+				"KESS shortcut string.", // Parameter's description.
+				StringType, // Parameter's type.
+				kRequired, // kOptional or kRequired.
+			}
+		}
+	}
+};
+	
+#endif // __ODFRC__
+
+#include "KESS_enUS.fr"
+#include "KESS_jaJP.fr"
