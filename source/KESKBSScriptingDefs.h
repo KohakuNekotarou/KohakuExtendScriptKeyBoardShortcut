@@ -22,8 +22,8 @@
 //========================================================================================
 
 
-#ifndef __KESSScriptingDefs_h__
-#define __KESSScriptingDefs_h__
+#ifndef __KESKBSScriptingDefs_h__
+#define __KESKBSScriptingDefs_h__
 
 #define kCPrefs_CLSID { 0x8d448fe0, 0x8194, 0x11d3, { 0xa6, 0x53, 0x0, 0xe0, 0x98, 0x71, 0xa, 0x6f } }
 DECLARE_GUID(CPrefs_CLSID, kCPrefs_CLSID);
@@ -31,24 +31,18 @@ DECLARE_GUID(CPrefs_CLSID, kCPrefs_CLSID);
 // Note: 4-char IDs below must be unique.
 // See ScriptingDefs.h for further information.
 
-// Class ScriptIDs 
-enum KESSScriptClasses
-{
-	c_KESSShortcut = 'KSct',
-	c_KESShortcuts = 'KScs',
-};
-
 // Method IDs
-enum KESSScriptEvents
+enum KESKBSScriptEvents
 {
-	e_KESSAddShortcut = 'KASc',
+	e_Speak		= 'eSpk'
 };
 
 // Property IDs
-enum KESSScriptProperties
+enum KESKBSScriptProperties
 {
-	p_KESSShortcutContextString = 'KSCS',
-	p_KESSShortcutString = 'KScS',
+	p_KESKBSBeforeTranslationActionArea = 'KBTA',
+	p_KESKBSBeforeTranslationActionName = 'KBTN',
 };
 
-#endif // __KESSScriptingDefs_h__
+
+#endif // __KESKBSScriptingDefs_h__

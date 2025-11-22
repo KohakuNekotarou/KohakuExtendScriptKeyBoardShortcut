@@ -43,13 +43,15 @@
 #include "ScriptInfoTypes.fh"
 #include "AppFrameworkID.h"
 
-// Project includes:
 #include "ActionID.h" // for kMenuActionObjectScriptElement
-#include "KESSID.h"
+
+// Project includes:
+#include "KESKBSID.h"
 #include "GenericID.h"
 #include "ShuksanID.h"
 #include "TextID.h"
-#include "KESSScriptingDefs.h"
+
+#include "KESKBSScriptingDefs.h"
 
 
 #ifdef __ODFRC__
@@ -60,14 +62,14 @@
 resource PluginVersion (kSDKDefPluginVersionResourceID)
 {
 	kTargetVersion,
-	kKESSPluginID,
+	kKESKBSPluginID,
 	kSDKDefPlugInMajorVersionNumber, kSDKDefPlugInMinorVersionNumber,
 	kSDKDefHostMajorVersionNumber, kSDKDefHostMinorVersionNumber,
-	kKESSCurrentMajorFormatNumber, kKESSCurrentMinorFormatNumber,
+	kKESKBSCurrentMajorFormatNumber, kKESKBSCurrentMinorFormatNumber,
 	{ kInDesignProduct },
 	{ kWildFS },
 	kModelPlugIn,
-	kKESSVersion
+	kKESKBSVersion
 };
 
 /*  
@@ -79,9 +81,9 @@ resource PluginVersion (kSDKDefPluginVersionResourceID)
  */
 resource ExtraPluginInfo(1)
 {
-	kKESSCompanyValue,			// Company name
-	kKESSMissingPluginURLValue,	// URL 
-	kKESSMissingPluginAlertValue,	// Missing plug-in alert text
+	kKESKBSCompanyValue,			// Company name
+	kKESKBSMissingPluginURLValue,	// URL 
+	kKESKBSMissingPluginAlertValue,	// Missing plug-in alert text
 };
 
 /* 
@@ -92,22 +94,13 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 		
 	Class
 	{
-		kKESSShortcutScriptProviderBoss,
+		kKESKBSScriptProviderBoss,
 		kBaseScriptProviderBoss,
 		{
-			IID_ISCRIPTPROVIDER, kKESSShortcutScriptProviderImpl,
+			IID_ISCRIPTPROVIDER,kKESKBSScriptProviderImpl,
 		}
 	},
-
-	Class
-	{
-		kKESSShortcutScriptObjectBoss,
-		kBaseProxyScriptObjectBoss,
-		{
-			IID_ISCRIPT, kKESSShortcutScriptImpl,
-			IID_IINTDATA, kIntDataImpl,
-		}
-	},
+	
 
 }}};
 
@@ -118,7 +111,7 @@ resource FactoryList (kSDKDefFactoryListResourceID)
 {
 	kImplementationIDSpace,
 	{
-		#include "KESSFactoryList.h"
+		#include "KESKBSFactoryList.h"
 	}
 };
 
@@ -182,74 +175,50 @@ resource VersionedScriptElementInfo(2)
 	
 	// Elements
 	{
-		// ---------------------------------------------------------------------------------------
-		// Shortcut script provider
+		// Connects this plug-in's methods and properties to scripting.
 		Provider
 		{
-			kKESSShortcutScriptProviderBoss, // provider boss ID
+			kKESKBSScriptProviderBoss,	// provider boss ID
 			{
-				// Parent
-				Parent{ kMenuActionObjectScriptElement }, 
+				Object{ kMenuActionObjectScriptElement },
 
-				// Shortcut object.
-				// app.menuActions[0].kessShortcuts.count();
-				RepresentObject{ kKESSShortcutObjectScriptElement },
+				// Before translation action area.
+				// beforeTranslationActionArea = app.menuActions[0].keskbsBeforeTranslationActionArea;
+				Property{ kKESKBSBeforeTranslationActionAreaPropertyScriptElement, kReadOnly },
 
-				// Add shortcut.
-				// context = "DefaultContext";
-				// context = "TableContext";
-				// context = "TableObjectContext";
-				// context = "KBSCContext_XMLStructureContext";
-				// context = "FullScreenContext";
-				// context = "TextContext";
-				// app.menuActions[0].kessShortcuts.kessAdd(context, "Shift+Ctrl+Alt+F1");
-				CollectionMethod{ kKESSAddShortcutMethodScriptElement },
+				// Before translation action name.
+				// beforeTranslationActionName = app.menuActions[0].keskbsBeforeTranslationActionName;
+				Property{ kKESKBSBeforeTranslationActionNamePropertyScriptElement, kReadOnly },
 			}
 		}
-		// Shortcut object
-		Object
+
+		// Specifies a property
+		Property
 		{
-			kKESSShortcutObjectScriptElement, // Script element ID
-			c_KESSShortcut, // ScriptID
-			"KESS shortcut", // Name
-			"KESS shortcut", // Description
-			kKESSShortcutObject_CLSID, // Windows CLSID
-
-			c_KESShortcuts, // Collection
-			"KESS shortcuts", // Name
-			"KESS shortcuts", // Description
-			kKESShortcutsObject_CLSID, // Windows CLSID
-
-			kNonIDBasedObjectScriptElement, // base object script element ID
-			kBasicSuiteScriptElement,	// suite script element ID
+			kKESKBSBeforeTranslationActionAreaPropertyScriptElement,
+			p_KESKBSBeforeTranslationActionArea,
+			"KESKBS before translation action area",
+			"KESKBS before translation action area.",
+			StringType,
+			{}
+			kNoAttributeClass,
 		}
 
-
-		Method
+		// Specifies a property
+		Property
 		{
-			kKESSAddShortcutMethodScriptElement,
-			e_KESSAddShortcut,
-			"KESS add",
-			"Create a new shortcut.",
-			VoidType,
-			{ // list of method parameters.
-				p_KESSShortcutContextString, // Parameter's ScriptID.
-				"KESS shortcut context string", // Parameter's name.
-				"KESS shortcut context string.", // Parameter's description.
-				StringType, // Parameter's type.
-				kRequired, // kOptional or kRequired.
-
-				p_KESSShortcutString, // Parameter's ScriptID.
-				"KESS shortcut string", // Parameter's name.
-				"KESS shortcut string.", // Parameter's description.
-				StringType, // Parameter's type.
-				kRequired, // kOptional or kRequired.
-			}
+			kKESKBSBeforeTranslationActionNamePropertyScriptElement,
+			p_KESKBSBeforeTranslationActionName,
+			"KESKBS before translation action name",
+			"KESKBS before translation action name.",
+			StringType,
+			{}
+			kNoAttributeClass,
 		}
 	}
 };
-	
+
 #endif // __ODFRC__
 
-#include "KESS_enUS.fr"
-#include "KESS_jaJP.fr"
+#include "KESKBS_enUS.fr"
+#include "KESKBS_jaJP.fr"
