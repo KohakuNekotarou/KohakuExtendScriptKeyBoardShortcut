@@ -26,9 +26,11 @@
 // Interface includes:
 #include "IActionManager.h"
 #include "IApplication.h"
+#include "IKBSCSetsManager.h"
 #include "IMenuUtils.h"
 #include "IScript.h"
 #include "IScriptRequestData.h"
+#include "IShortcutManager.h"
 #include "IWorkspace.h"
 
 // General includes:
@@ -47,20 +49,41 @@ public:
 	// Constructor.
 	KESKBSScriptProvider(IPMUnknown* boss) : CScriptProvider(boss) {};
 
-	// This method is called if a provider can handle a property.
-	// @param scriptID_prop identifies the ID of the property to handle.
-	// @param iScriptRequestData identifies an interface pointer used to extract data.
-	// @param iScript_parent identifies an interface pointer on the script object representing the parent of the application object.
+	// HandleMethod
+	virtual ErrorCode HandleMethod(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript);
+
+	// AccessProperty
 	virtual ErrorCode AccessProperty(ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript_parent);
 
 private:
 	virtual ErrorCode GetBeforeTranslationActionNameOrArea(
 		ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript_parent, PMString pMString_target);
+
+	virtual ErrorCode IsUserShortcutKBSCArea(
+		ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript_parent);
 };
 
 // CREATE_PMINTERFACE
 // Binds the C++ implementation class onto its ImplementationID making the C++ code callable by the application.
 CREATE_PMINTERFACE(KESKBSScriptProvider, kKESKBSScriptProviderImpl)
+
+// HandleMethod
+ErrorCode KESKBSScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript)
+{
+	ErrorCode result = kFailure;
+
+	switch (scriptID.Get())
+	{
+	case e_KESKBSIsUserShortcutKBSCArea:
+		result = this->IsUserShortcutKBSCArea(scriptID, iScriptRequestData, iScript);
+		break;
+
+	default:
+		return CScriptProvider::HandleMethod(scriptID, iScriptRequestData, iScript);
+	}
+
+	return result;
+}
 
 // AccessProperty
 ErrorCode KESKBSScriptProvider::AccessProperty(
@@ -134,6 +157,42 @@ ErrorCode KESKBSScriptProvider::GetBeforeTranslationActionNameOrArea(
 
 			status = kSuccess;
 		}
+	} while (false);
+
+	return status;
+}
+
+// IsUserShortcutKBSCArea
+ErrorCode KESKBSScriptProvider::IsUserShortcutKBSCArea(
+	ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript_parent)
+{
+	ErrorCode status = kFailure;
+
+	do
+	{
+		// ---------------------------------------------------------------------------------------
+		// Query IShortcutManager.
+		InterfacePtr<IApplication> iApplication(GetExecutionContextSession()->QueryApplication());
+		if (iApplication == nil) break;
+
+		InterfacePtr<IActionManager> iActionManager(iApplication->QueryActionManager());
+		if (iActionManager == nil) break;
+
+		InterfacePtr<IShortcutManager> iShortcutManager(iActionManager, ::UseDefaultIID());
+		if (iShortcutManager == nil) break;
+
+		// ---------------------------------------------------------------------------------------
+		// GetShortcutKBSCArea
+		IKBSCSetsManager::KBSCArea kBSCArea = iShortcutManager->GetShortcutKBSCArea();
+		int32 int32_flg;
+		if (kBSCArea == IKBSCSetsManager::kUserKBSCArea) int32_flg = 1;
+		else int32_flg = 0;
+
+		// ---------------------------------------------------------------------------------------
+		// Append return data
+		iScriptRequestData->AppendReturnData(iScript_parent, scriptID, ScriptData(int32_flg));
+
+		status = kSuccess;
 	} while (false);
 
 	return status;

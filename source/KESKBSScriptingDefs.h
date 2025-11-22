@@ -42,6 +42,7 @@ enum KESKBSScriptEvents
 {
 	e_KESKBSAdd = 'KAdd',
 	e_KESKBSRemove = 'KRem',
+	e_KESKBSIsUserShortcutKBSCArea = 'KIUA',
 };
 
 // Property IDs

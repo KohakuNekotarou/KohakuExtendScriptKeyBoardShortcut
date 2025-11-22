@@ -197,6 +197,10 @@ resource VersionedScriptElementInfo(2)
 			{
 				Object{ kMenuActionObjectScriptElement },
 
+				// Is user shortcut KBSC area.
+				// areaFlg = app.menuActions[0].keskbsIsUserShortcutKBSCArea;
+				Method{ kKESKBSIsUserShortcutKBSCAreaMethodScriptElement },
+
 				// Before translation action area.
 				// beforeTranslationActionArea = app.menuActions[0].keskbsBeforeTranslationActionArea;
 				Property{ kKESKBSBeforeTranslationActionAreaPropertyScriptElement, kReadOnly },
@@ -207,7 +211,19 @@ resource VersionedScriptElementInfo(2)
 			}
 		}
 
-		// BeforeTranslationActionArea
+		// Is user shortcut KBSC area.
+		Method
+		{
+			kKESKBSIsUserShortcutKBSCAreaMethodScriptElement,
+			e_KESKBSIsUserShortcutKBSCArea,
+			"KESKBS is user shortcut k b s c area",
+			"KESKBS is user shortcut KBSC area.",
+			BoolType,
+			"KESKBS is user shortcut KBSC area flg.",
+			{}
+		}
+
+		// Before translation action area.
 		Property
 		{
 			kKESKBSBeforeTranslationActionAreaPropertyScriptElement,
@@ -219,7 +235,7 @@ resource VersionedScriptElementInfo(2)
 			kNoAttributeClass,
 		}
 
-		// BeforeTranslationActionName
+		// Before translation action name.
 		Property
 		{
 			kKESKBSBeforeTranslationActionNamePropertyScriptElement,
