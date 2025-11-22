@@ -36,6 +36,7 @@ public:
 	// Constructor
 	KESKBSKeyBoardShortcutScriptProvider(IPMUnknown* boss);
 
+	// HandleMethod
 	virtual ErrorCode HandleMethod(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript);
 
 protected:
@@ -46,8 +47,11 @@ protected:
 	virtual ErrorCode AppendNthObject(const IScriptRequestData* iScriptRequestData, IScript* iScript, int32 int32_n, ScriptList& scriptList);
 
 private:
-	// Add shortcut.
+	// AddKeyBoardShortcut
 	ErrorCode AddKeyBoardShortcut(ScriptID scriptID_method, IScriptRequestData* iScriptRequestData, IScript* iScript);
+
+	// RemoveKeyBoardShortcut
+	ErrorCode RemoveKeyBoardShortcut(ScriptID scriptID_method, IScriptRequestData* iScriptRequestData, IScript* iScript);
 };
 
 // Make the implementation available to the application.
@@ -63,9 +67,14 @@ ErrorCode KESKBSKeyBoardShortcutScriptProvider::HandleMethod(ScriptID scriptID, 
 
 	switch (scriptID.Get())
 	{
-	case e_KESKBSAdd: // Add shortcut.
+	case e_KESKBSAdd:
 	{
 		result = this->AddKeyBoardShortcut(scriptID, iScriptRequestData, iScript);
+		break;
+	}
+	case e_KESKBSRemove:
+	{
+		result = this->RemoveKeyBoardShortcut(scriptID, iScriptRequestData, iScript);
 		break;
 	}
 	default:
@@ -230,6 +239,90 @@ ErrorCode KESKBSKeyBoardShortcutScriptProvider::AddKeyBoardShortcut(
 		result = kSuccess;
 
 	} while (false);
+
+	return result;
+}
+
+// RemoveKeyBoardShortcut
+ErrorCode KESKBSKeyBoardShortcutScriptProvider::RemoveKeyBoardShortcut(
+	ScriptID scriptID_method, IScriptRequestData* iScriptRequestData, IScript* iScript)
+{
+	ErrorCode result = kFailure;
+
+	do
+	{
+		// ---------------------------------------------------------------------------------------
+		// Get actionID.
+		InterfacePtr<IScript> iScript_parent((IScript*)iScript->QueryParent(
+			IScript::kDefaultIID, iScriptRequestData->GetRequestContext()));
+		if (iScript_parent == nil) break;
+
+		ScriptObject scriptObject = iScript_parent->GetScriptObject(iScriptRequestData->GetRequestContext());
+
+		ScriptData scriptData = scriptObject.specifierData;
+
+		int32 int32_actionID;
+		scriptData.GetInt32(&int32_actionID);
+
+		// ---------------------------------------------------------------------------------------
+		// Get index
+		InterfacePtr<IIntData> iIntData(iScript, ::UseDefaultIID());
+		if (iIntData == nil) break;
+
+		int32 int32_index = iIntData->Get();
+
+		// ---------------------------------------------------------------------------------------
+		// Query IShortcutManager.
+		InterfacePtr<IApplication> iApplication(GetExecutionContextSession()->QueryApplication());
+		if (iApplication == nil) break;
+
+		InterfacePtr<IActionManager> iActionManager(iApplication->QueryActionManager());
+		if (iActionManager == nil) break;
+
+		InterfacePtr<IShortcutManager> iShortcutManager(iActionManager, ::UseDefaultIID());
+		if (iShortcutManager == nil) break;
+
+		// ---------------------------------------------------------------------------------------
+		// Get shortcuts
+		int32 int32_num = iShortcutManager->GetNumShortcutsForAction(int32_actionID);
+
+		std::vector<PMString> vector_contextStrOut;
+		std::vector<VirtualKey> vector_keyOut;
+		std::vector<int16> vector_modsOut;
+		for (int32 i = 0; i < int32_num; i++)
+		{
+			if (i == int32_index) continue;
+
+			// Retrieve information about the nth shortcut associated with a particular action.
+			PMString pMString_contextStrOut;
+			VirtualKey virtualKey_keyOut;
+			int16 int16_modsOut;
+			iShortcutManager->GetNthShortcutForAction(
+				int32_actionID,
+				i,
+				&pMString_contextStrOut,
+				&virtualKey_keyOut,
+				&int16_modsOut
+			);
+			vector_contextStrOut.emplace_back(pMString_contextStrOut);
+			vector_keyOut.emplace_back(virtualKey_keyOut);
+			vector_modsOut.emplace_back(int16_modsOut);
+		}
+
+		// ---------------------------------------------------------------------------------------
+		// RemoveAllShortcutsForAction
+		iShortcutManager->RemoveAllShortcutsForAction(int32_actionID);
+
+		// ---------------------------------------------------------------------------------------
+		// Add shortcut.
+		for (int32 i = 0; i < vector_contextStrOut.size(); i++)
+		{
+			iShortcutManager->AddShortcut(int32_actionID, vector_contextStrOut[i], vector_keyOut[i], vector_modsOut[i]);
+		}
+
+		result = kSuccess;
+
+	} while (false); // only do once.
 
 	return result;
 }

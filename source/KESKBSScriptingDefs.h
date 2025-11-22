@@ -41,6 +41,7 @@ enum KESKBSScriptClasses
 enum KESKBSScriptEvents
 {
 	e_KESKBSAdd = 'KAdd',
+	e_KESKBSRemove = 'KRem',
 };
 
 // Property IDs

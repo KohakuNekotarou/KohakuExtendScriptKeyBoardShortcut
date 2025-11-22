@@ -254,6 +254,9 @@ resource VersionedScriptElementInfo(2)
 				// context = "TextContext";
 				// app.menuActions[0].keskbsKeyBoardShortcuts.keskbsAdd(context, "Shift+Ctrl+Alt+F1");
 				CollectionMethod{ kKESKBSAddKeyBoardShortcutMethodScriptElement },
+
+				// app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsRemove();
+				Method{ kKESKBSRemoveKeyBoardShortcutMethodScriptElement },
 			}
 		}
 
@@ -295,6 +298,18 @@ resource VersionedScriptElementInfo(2)
 				"KESKBS shortcut string.", // Parameter's description.
 				StringType, // Parameter's type.
 				kRequired, // kOptional or kRequired.
+			}
+		}
+
+		// RemoveKeyBoardShortcut
+		Method
+		{
+			kKESKBSRemoveKeyBoardShortcutMethodScriptElement,
+			e_KESKBSRemove,
+			"KESKBS remove",
+			"Remove key boad shortcut.",
+			VoidType,
+			{
 			}
 		}
 	}
