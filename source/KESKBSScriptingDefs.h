@@ -31,10 +31,16 @@ DECLARE_GUID(CPrefs_CLSID, kCPrefs_CLSID);
 // Note: 4-char IDs below must be unique.
 // See ScriptingDefs.h for further information.
 
+enum KESKBSScriptClasses
+{
+	c_KESKBSKeyBoardShortcut = 'KKSt',
+	c_KESKBSKeyBoardShortcuts = 'KKSs',
+};
+
 // Method IDs
 enum KESKBSScriptEvents
 {
-	e_Speak		= 'eSpk'
+	e_KESKBSAdd = 'KAdd',
 };
 
 // Property IDs
@@ -42,7 +48,8 @@ enum KESKBSScriptProperties
 {
 	p_KESKBSBeforeTranslationActionArea = 'KBTA',
 	p_KESKBSBeforeTranslationActionName = 'KBTN',
+	p_KESKBSKeyBoardShortcutContextString = 'KSCS',
+	p_KESKBSKeyBoardShortcutString = 'KScS',
 };
-
 
 #endif // __KESKBSScriptingDefs_h__

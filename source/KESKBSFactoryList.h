@@ -20,5 +20,6 @@
 //  distribution of it requires the prior written permission of Adobe.
 //  
 //========================================================================================
-REGISTER_PMINTERFACE(KESSShortcutScriptProvider, kKESSShortcutScriptProviderImpl)
-REGISTER_PMINTERFACE(KESSShortcutScript, kKESSShortcutScriptImpl)
+REGISTER_PMINTERFACE(KESKBSScriptProvider, kKESKBSScriptProviderImpl)
+REGISTER_PMINTERFACE(KESKBSKeyBoardShortcutScriptProvider, kKESKBSKeyBoardShortcutScriptProviderImpl)
+REGISTER_PMINTERFACE(KESKBSKeyBoardShortcutScript, kKESKBSKeyBoardShortcutScriptImpl)

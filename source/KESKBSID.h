@@ -49,12 +49,16 @@
 DECLARE_PMID(kPlugInIDSpace, kKESKBSPluginID, kKESKBSPrefix + 0)
 
 // ClassIDs:
-DECLARE_PMID(kClassIDSpace, kKESKBSScriptProviderBoss, kKESKBSPrefix + 3)
+DECLARE_PMID(kClassIDSpace, kKESKBSScriptProviderBoss, kKESKBSPrefix + 0)
+DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutScriptProviderBoss, kKESKBSPrefix + 1)
+DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutScriptObjectBoss, kKESKBSPrefix + 2)
 
 // InterfaceIDs:
 
 // ImplementationIDs:
 DECLARE_PMID(kImplementationIDSpace, kKESKBSScriptProviderImpl, kKESKBSPrefix + 0 )
+DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutScriptProviderImpl, kKESKBSPrefix + 1)
+DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutScriptImpl, kKESKBSPrefix + 2)
 
 // ActionIDs:
 DECLARE_PMID(kActionIDSpace, kKESKBSAboutActionID, kKESKBSPrefix + 0)
@@ -65,6 +69,13 @@ DECLARE_PMID(kActionIDSpace, kKESKBSAboutActionID, kKESKBSPrefix + 0)
 //Script Element IDs
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSBeforeTranslationActionNamePropertyScriptElement, kKESKBSPrefix + 0)
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSBeforeTranslationActionAreaPropertyScriptElement, kKESKBSPrefix + 1)
+DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutObjectScriptElement, kKESKBSPrefix + 2)
+DECLARE_PMID(kScriptInfoIDSpace, kKESKBSAddKeyBoardShortcutMethodScriptElement, kKESKBSPrefix + 3)
+
+// GUIDs for script objects:
+// Visual Studio : Tools > Generate GUID
+#define kKESKBSKeyBoardShortcutObject_CLSID { 0xf9a6278e, 0xc3c, 0x4345, { 0xb1, 0xc2, 0x25, 0x37, 0x61, 0x99, 0x39, 0x31 } }
+#define kKESKBShortcutsObject_CLSID { 0xcf8c4b1c, 0x78e5, 0x4072, { 0x96, 0x48, 0x1c, 0x02, 0x45, 0xe2, 0xfa, 0xde } }
 
 // "About Plug-ins" sub-menu:
 #define kKESKBSAboutMenuKey			kKESKBSStringPrefix "kKESKBSAboutMenuKey"

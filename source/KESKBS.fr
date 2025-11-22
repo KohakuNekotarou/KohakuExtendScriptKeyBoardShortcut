@@ -43,8 +43,6 @@
 #include "ScriptInfoTypes.fh"
 #include "AppFrameworkID.h"
 
-#include "ActionID.h" // for kMenuActionObjectScriptElement
-
 // Project includes:
 #include "KESKBSID.h"
 #include "GenericID.h"
@@ -100,7 +98,25 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 			IID_ISCRIPTPROVIDER,kKESKBSScriptProviderImpl,
 		}
 	},
-	
+
+	Class
+	{
+		kKESKBSKeyBoardShortcutScriptProviderBoss,
+		kBaseScriptProviderBoss,
+		{
+			IID_ISCRIPTPROVIDER, kKESKBSKeyBoardShortcutScriptProviderImpl,
+		}
+	},
+
+	Class
+	{
+		kKESKBSKeyBoardShortcutScriptObjectBoss,
+		kBaseProxyScriptObjectBoss,
+		{
+			IID_ISCRIPT, kKESKBSKeyBoardShortcutScriptImpl,
+			IID_IINTDATA, kIntDataImpl,
+		}
+	},
 
 }}};
 
@@ -114,7 +130,6 @@ resource FactoryList (kSDKDefFactoryListResourceID)
 		#include "KESKBSFactoryList.h"
 	}
 };
-
 
 /*  
  * Locale Indicies.
@@ -192,7 +207,7 @@ resource VersionedScriptElementInfo(2)
 			}
 		}
 
-		// Specifies a property
+		// BeforeTranslationActionArea
 		Property
 		{
 			kKESKBSBeforeTranslationActionAreaPropertyScriptElement,
@@ -204,7 +219,7 @@ resource VersionedScriptElementInfo(2)
 			kNoAttributeClass,
 		}
 
-		// Specifies a property
+		// BeforeTranslationActionName
 		Property
 		{
 			kKESKBSBeforeTranslationActionNamePropertyScriptElement,
@@ -214,6 +229,73 @@ resource VersionedScriptElementInfo(2)
 			StringType,
 			{}
 			kNoAttributeClass,
+		}
+
+		// ---------------------------------------------------------------------------------------
+		// Shortcut script provider
+		Provider
+		{
+			kKESKBSKeyBoardShortcutScriptProviderBoss, // provider boss ID
+			{
+				// Parent
+				Parent{ kMenuActionObjectScriptElement }, 
+
+				// Shortcut object.
+				// app.menuActions[0].keskbsKeyBoardShortcuts.count();
+				RepresentObject{ kKESKBSKeyBoardShortcutObjectScriptElement },
+
+				// Add shortcut.
+				// context = "DialogContext";
+				// context = "DefaultContext";
+				// context = "TableContext";
+				// context = "TableObjectContext";
+				// context = "KBSCContext_XMLStructureContext";
+				// context = "FullScreenContext";
+				// context = "TextContext";
+				// app.menuActions[0].keskbsKeyBoardShortcuts.keskbsAdd(context, "Shift+Ctrl+Alt+F1");
+				CollectionMethod{ kKESKBSAddKeyBoardShortcutMethodScriptElement },
+			}
+		}
+
+		// Shortcut object
+		Object
+		{
+			kKESKBSKeyBoardShortcutObjectScriptElement, // Script element ID
+			c_KESKBSKeyBoardShortcut, // ScriptID
+			"KESKBS key board shortcut", // Name
+			"KESKBS key board shortcut.", // Description
+			kKESKBSKeyBoardShortcutObject_CLSID, // Windows CLSID
+
+			c_KESKBSKeyBoardShortcuts, // Collection
+			"KESKBS key board shortcuts", // Name
+			"KESKBS key board shortcuts.", // Description
+			kKESKBShortcutsObject_CLSID, // Windows CLSID
+
+			kNonIDBasedObjectScriptElement, // base object script element ID
+			kBasicSuiteScriptElement,	// suite script element ID
+		}
+
+		// AddShortcut
+		Method
+		{
+			kKESKBSAddKeyBoardShortcutMethodScriptElement,
+			e_KESKBSAdd,
+			"KESKBS add",
+			"Create a new shortcut.",
+			VoidType,
+			{ // list of method parameters.
+				p_KESKBSKeyBoardShortcutContextString, // Parameter's ScriptID.
+				"KESKBS shortcut context string", // Parameter's name.
+				"KESKBS shortcut context string.", // Parameter's description.
+				StringType, // Parameter's type.
+				kRequired, // kOptional or kRequired.
+
+				p_KESKBSKeyBoardShortcutString, // Parameter's ScriptID.
+				"KESKBS shortcut string", // Parameter's name.
+				"KESKBS shortcut string.", // Parameter's description.
+				StringType, // Parameter's type.
+				kRequired, // kOptional or kRequired.
+			}
 		}
 	}
 };
