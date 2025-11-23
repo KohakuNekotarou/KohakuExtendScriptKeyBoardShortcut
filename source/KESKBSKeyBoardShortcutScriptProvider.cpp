@@ -233,9 +233,6 @@ ErrorCode KESKBSKeyBoardShortcutScriptProvider::AddKeyBoardShortcut(
 		// Add shortcut.
 		iShortcutManager->AddShortcut(int32_actionID, pMString_shortcutContextLocalString, virtualKey_keyOut, int16_modsOut);
 
-		// Save current shortcut.
-		//result = iShortcutManager->SaveCurrentShortcutSetFile();
-
 		result = kSuccess;
 
 	} while (false);

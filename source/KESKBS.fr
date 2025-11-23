@@ -43,6 +43,8 @@
 #include "ScriptInfoTypes.fh"
 #include "AppFrameworkID.h"
 
+#include "AppUIID.h" // for kGeneralPrefsObjectScriptElement
+
 // Project includes:
 #include "KESKBSID.h"
 #include "GenericID.h"
@@ -213,6 +215,13 @@ resource VersionedScriptElementInfo(2)
 				// Before translation action name.
 				// beforeTranslationActionName = app.menuActions[0].keskbsBeforeTranslationActionName;
 				Property{ kKESKBSBeforeTranslationActionNamePropertyScriptElement, kReadOnly },
+
+				// ---------------------------------------------------------------------------------------
+				Object{ kGeneralPrefsObjectScriptElement },
+
+				// Save current shortcut set file.
+				// app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
+				Method{ kKESKBSSaveCurrentShortcutSetFileMethodScriptElement },
 			}
 		}
 
@@ -235,6 +244,17 @@ resource VersionedScriptElementInfo(2)
 			e_KESKBSRemoveAllShortcutsForAction,
 			"KESKBS remove all shortcuts for action",
 			"KESKBS remove all shortcuts for action.",
+			VoidType,
+			{}
+		}
+
+		// Save current shortcut set file.
+		Method
+		{
+			kKESKBSSaveCurrentShortcutSetFileMethodScriptElement,
+			e_KESKBSSaveCurrentShortcutSetFile,
+			"KESKBS save current shortcut set file",
+			"KESKBS save current shortcut set file.",
 			VoidType,
 			{}
 		}

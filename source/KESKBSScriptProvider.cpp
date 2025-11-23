@@ -66,6 +66,9 @@ private:
 
 	// RemoveAllShortcutsForAction
 	virtual ErrorCode RemoveAllShortcutsForAction(IScriptRequestData* iScriptRequestData, IScript* iScript);
+
+	// SaveCurrentShortcutSetFile
+	virtual ErrorCode SaveCurrentShortcutSetFile();
 };
 
 // CREATE_PMINTERFACE
@@ -85,6 +88,10 @@ ErrorCode KESKBSScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestDa
 
 	case e_KESKBSRemoveAllShortcutsForAction:
 		result = this->RemoveAllShortcutsForAction(iScriptRequestData, iScript);
+		break;
+
+	case e_KESKBSSaveCurrentShortcutSetFile:
+		result = this->SaveCurrentShortcutSetFile();
 		break;
 
 	default:
@@ -239,6 +246,36 @@ ErrorCode KESKBSScriptProvider::RemoveAllShortcutsForAction(IScriptRequestData* 
 		iShortcutManager->RemoveAllShortcutsForAction(int32_actionID);
 
 		status = kSuccess;
+
+	} while (false);
+
+	return status;
+}
+
+// SaveCurrentShortcutSetFile
+ErrorCode KESKBSScriptProvider::SaveCurrentShortcutSetFile()
+{
+	ErrorCode status = kFailure;
+
+	do
+	{
+		// ---------------------------------------------------------------------------------------
+		// Query IShortcutManager.
+		InterfacePtr<IApplication> iApplication(GetExecutionContextSession()->QueryApplication());
+		if (iApplication == nil) break;
+
+		InterfacePtr<IActionManager> iActionManager(iApplication->QueryActionManager());
+		if (iActionManager == nil) break;
+
+		InterfacePtr<IShortcutManager> iShortcutManager(iActionManager, ::UseDefaultIID());
+		if (iShortcutManager == nil) break;
+
+		// ---------------------------------------------------------------------------------------
+		// Save current shortcut set file.
+		iShortcutManager->SaveCurrentShortcutSetFile();
+
+		status = kSuccess;
+
 	} while (false);
 
 	return status;
