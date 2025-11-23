@@ -73,6 +73,7 @@ DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutObjectScriptElement, kKE
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSAddKeyBoardShortcutMethodScriptElement, kKESKBSPrefix + 3)
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSRemoveKeyBoardShortcutMethodScriptElement, kKESKBSPrefix + 4)
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSIsUserShortcutKBSCAreaMethodScriptElement, kKESKBSPrefix + 5)
+DECLARE_PMID(kScriptInfoIDSpace, kKESKBSRemoveAllShortcutsForActionMethodScriptElement, kKESKBSPrefix + 6)
 
 // GUIDs for script objects:
 // Visual Studio : Tools > Generate GUID

@@ -51,6 +51,7 @@
 
 #include "KESKBSScriptingDefs.h"
 
+#include "LayoutUIID.h" // for kLayoutWidgetBoss
 
 #ifdef __ODFRC__
 
@@ -198,8 +199,12 @@ resource VersionedScriptElementInfo(2)
 				Object{ kMenuActionObjectScriptElement },
 
 				// Is user shortcut KBSC area.
-				// areaFlg = app.menuActions[0].keskbsIsUserShortcutKBSCArea;
+				// areaFlg = app.menuActions[0].keskbsIsUserShortcutKBSCArea();
 				Method{ kKESKBSIsUserShortcutKBSCAreaMethodScriptElement },
+
+				// Remove all shortcuts for action.
+				// app.menuActions[0].keskbsRemoveAllShortcutsForAction();
+				Method{ kKESKBSRemoveAllShortcutsForActionMethodScriptElement },
 
 				// Before translation action area.
 				// beforeTranslationActionArea = app.menuActions[0].keskbsBeforeTranslationActionArea;
@@ -220,6 +225,17 @@ resource VersionedScriptElementInfo(2)
 			"KESKBS is user shortcut KBSC area.",
 			BoolType,
 			"KESKBS is user shortcut KBSC area flg.",
+			{}
+		}
+
+		// Remove all shortcuts for action.
+		Method
+		{
+			kKESKBSRemoveAllShortcutsForActionMethodScriptElement,
+			e_KESKBSRemoveAllShortcutsForAction,
+			"KESKBS remove all shortcuts for action",
+			"KESKBS remove all shortcuts for action.",
+			VoidType,
 			{}
 		}
 

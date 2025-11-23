@@ -34,7 +34,7 @@
 #include "IWorkspace.h"
 
 // General includes:
-#include "CAlert.h"
+#include "CAlert.h" // CAlert::InformationAlert(Msg);
 #include "CScriptProvider.h"
 #include "PMLocaleId.h"
 #include "Utils.h"
@@ -56,11 +56,16 @@ public:
 	virtual ErrorCode AccessProperty(ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript_parent);
 
 private:
+	// GetBeforeTranslationActionNameOrArea
 	virtual ErrorCode GetBeforeTranslationActionNameOrArea(
 		ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript_parent, PMString pMString_target);
 
+	// IsUserShortcutKBSCArea
 	virtual ErrorCode IsUserShortcutKBSCArea(
-		ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript_parent);
+		ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript);
+
+	// RemoveAllShortcutsForAction
+	virtual ErrorCode RemoveAllShortcutsForAction(IScriptRequestData* iScriptRequestData, IScript* iScript);
 };
 
 // CREATE_PMINTERFACE
@@ -76,6 +81,10 @@ ErrorCode KESKBSScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestDa
 	{
 	case e_KESKBSIsUserShortcutKBSCArea:
 		result = this->IsUserShortcutKBSCArea(scriptID, iScriptRequestData, iScript);
+		break;
+
+	case e_KESKBSRemoveAllShortcutsForAction:
+		result = this->RemoveAllShortcutsForAction(iScriptRequestData, iScript);
 		break;
 
 	default:
@@ -164,7 +173,7 @@ ErrorCode KESKBSScriptProvider::GetBeforeTranslationActionNameOrArea(
 
 // IsUserShortcutKBSCArea
 ErrorCode KESKBSScriptProvider::IsUserShortcutKBSCArea(
-	ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript_parent)
+	ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript)
 {
 	ErrorCode status = kFailure;
 
@@ -190,7 +199,44 @@ ErrorCode KESKBSScriptProvider::IsUserShortcutKBSCArea(
 
 		// ---------------------------------------------------------------------------------------
 		// Append return data
-		iScriptRequestData->AppendReturnData(iScript_parent, scriptID, ScriptData(int32_flg));
+		iScriptRequestData->AppendReturnData(iScript, scriptID, ScriptData(int32_flg));
+
+		status = kSuccess;
+	} while (false);
+
+	return status;
+}
+
+// RemoveAllShortcutsForAction
+ErrorCode KESKBSScriptProvider::RemoveAllShortcutsForAction(IScriptRequestData* iScriptRequestData, IScript* iScript)
+{
+	ErrorCode status = kFailure;
+
+	do
+	{
+		// ---------------------------------------------------------------------------------------
+		// Query IShortcutManager.
+		InterfacePtr<IApplication> iApplication(GetExecutionContextSession()->QueryApplication());
+		if (iApplication == nil) break;
+
+		InterfacePtr<IActionManager> iActionManager(iApplication->QueryActionManager());
+		if (iActionManager == nil) break;
+
+		InterfacePtr<IShortcutManager> iShortcutManager(iActionManager, ::UseDefaultIID());
+		if (iShortcutManager == nil) break;
+
+		// ---------------------------------------------------------------------------------------
+		// Get actionID.
+		ScriptObject scriptObject = iScript->GetScriptObject(iScriptRequestData->GetRequestContext());
+
+		ScriptData scriptData = scriptObject.specifierData;
+
+		int32 int32_actionID;
+		scriptData.GetInt32(&int32_actionID);
+
+		// ---------------------------------------------------------------------------------------
+		// RemoveAllShortcutsForAction
+		iShortcutManager->RemoveAllShortcutsForAction(int32_actionID);
 
 		status = kSuccess;
 	} while (false);
