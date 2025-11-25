@@ -31,7 +31,8 @@ beforeTranslationActionArea = app.menuActions[0].keskbsBeforeTranslationActionAr
 beforeTranslationActionName = app.menuActions[0].keskbsBeforeTranslationActionName;
 
 // Save current shortcut set file.
-app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
+areaFlg = app.menuActions[0].keskbsIsUserShortcutKBSCArea();
+if(areaFlg) app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
 
 
 
