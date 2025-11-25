@@ -52,6 +52,10 @@ private:
 
 	// RemoveKeyBoardShortcut
 	ErrorCode RemoveKeyBoardShortcut(ScriptID scriptID_method, IScriptRequestData* iScriptRequestData, IScript* iScript);
+
+	// GetSetContextStrOrShortcutStr
+	ErrorCode GetSetContextStringOrShortcutString(
+		ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript, PMString pMString_target);
 };
 
 // Make the implementation available to the application.
@@ -317,6 +321,111 @@ ErrorCode KESKBSKeyBoardShortcutScriptProvider::RemoveKeyBoardShortcut(
 			iShortcutManager->AddShortcut(int32_actionID, vector_contextStrOut[i], vector_keyOut[i], vector_modsOut[i]);
 		}
 
+		result = kSuccess;
+
+	} while (false); // only do once.
+
+	return result;
+}
+
+// GetSetContextStrOrShortcutString
+ErrorCode KESKBSKeyBoardShortcutScriptProvider::GetSetContextStringOrShortcutString(
+	ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript, PMString pMString_target)
+{
+	ErrorCode result = kFailure;
+
+	do
+	{
+		// ---------------------------------------------------------------------------------------
+		// Get actionID.
+		InterfacePtr<IScript> iScript_parent((IScript*)iScript->QueryParent(
+			IScript::kDefaultIID, iScriptRequestData->GetRequestContext()));
+		if (iScript_parent == nil) break;
+
+		ScriptObject scriptObject = iScript_parent->GetScriptObject(iScriptRequestData->GetRequestContext());
+
+		ScriptData scriptData = scriptObject.specifierData;
+
+		int32 int32_actionID;
+		scriptData.GetInt32(&int32_actionID);
+
+		// ---------------------------------------------------------------------------------------
+		// Get index
+		InterfacePtr<IIntData> iIntData(iScript, ::UseDefaultIID());
+		if (iIntData == nil) break;
+
+		int32 int32_index = iIntData->Get();
+
+		// ---------------------------------------------------------------------------------------
+		// Query IShortcutManager.
+		InterfacePtr<IApplication> iApplication(GetExecutionContextSession()->QueryApplication());
+		if (iApplication == nil) break;
+
+		InterfacePtr<IActionManager> iActionManager(iApplication->QueryActionManager());
+		if (iActionManager == nil) break;
+
+		InterfacePtr<IShortcutManager> iShortcutManager(iActionManager, ::UseDefaultIID());
+		if (iShortcutManager == nil) break;
+
+		// ---------------------------------------------------------------------------------------
+		// Get shortcuts
+		int32 int32_num = iShortcutManager->GetNumShortcutsForAction(int32_actionID);
+
+		std::vector<PMString> vector_contextStrOut;
+		std::vector<VirtualKey> vector_keyOut;
+		std::vector<int16> vector_modsOut;
+		for (int32 i = 0; i < int32_num; i++)
+		{
+			// Retrieve information about the nth shortcut associated with a particular action.
+			PMString pMString_contextStrOut;
+			VirtualKey virtualKey_keyOut;
+			int16 int16_modsOut;
+			iShortcutManager->GetNthShortcutForAction(
+				int32_actionID,
+				i,
+				&pMString_contextStrOut,
+				&virtualKey_keyOut,
+				&int16_modsOut
+			);
+			vector_contextStrOut.emplace_back(pMString_contextStrOut);
+			vector_keyOut.emplace_back(virtualKey_keyOut);
+			vector_modsOut.emplace_back(int16_modsOut);
+		}
+
+		// Processing request data
+		if (iScriptRequestData->IsPropertyGet()) // Get
+		{
+			// Append return data
+			if (pMString_target == "ContextString")
+			{
+				iScriptRequestData->AppendReturnData(iScript, scriptID_prop, ScriptData(vector_contextStrOut[int32_index]));
+			}
+			else if (pMString_target == "ShortcutString")
+			{
+				PMString pMString_shortcutString = Utils<IShortcutUtils>()->GetShortcutString(
+					vector_keyOut[int32_index], vector_modsOut[int32_index]);
+
+				iScriptRequestData->AppendReturnData(iScript, scriptID_prop, ScriptData(pMString_shortcutString));
+			}
+		}
+		else if (iScriptRequestData->IsPropertyPut()) // Set
+		{
+			/*
+			// ---------------------------------------------------------------------------------------
+			// Extract request data
+			status = iScriptRequestData->ExtractRequestData(scriptID_property.Get(), scriptData);
+			if (status != kSuccess) break;
+
+			status = scriptData.GetPMReal(&pMReal_unit);
+			if (status != kSuccess) break;
+
+			// ---------------------------------------------------------------------------------------
+			// Set.
+			pMReal_point = iUnitOfMeasure->UnitsToPoints(pMReal_unit);
+
+			iLinkCaptionPrefs->SetFrameOffset(pMReal_point);
+					*/
+		}
 		result = kSuccess;
 
 	} while (false); // only do once.

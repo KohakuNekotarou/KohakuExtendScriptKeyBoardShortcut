@@ -307,8 +307,17 @@ resource VersionedScriptElementInfo(2)
 				// app.menuActions[0].keskbsKeyBoardShortcuts.keskbsAdd(context, "Shift+Ctrl+Alt+F1");
 				CollectionMethod{ kKESKBSAddKeyBoardShortcutMethodScriptElement },
 
+				// Remove key board shortcut
 				// app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsRemove();
 				Method{ kKESKBSRemoveKeyBoardShortcutMethodScriptElement },
+
+				// Key board shortcut context string.
+				// contextString = app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutContextString;
+				Property{ kKESKBSKeyBoardShortcutContextStringPropertyScriptElement, kReadWrite },
+
+				// Key board shortcut string.
+				// shortcutString = app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutString;
+				Property{ kKESKBSKeyBoardShortcutStringPropertyScriptElement, kReadWrite },
 			}
 		}
 
@@ -363,6 +372,30 @@ resource VersionedScriptElementInfo(2)
 			VoidType,
 			{
 			}
+		}
+
+		// Key board shortcut context string.
+		Property
+		{
+			kKESKBSKeyBoardShortcutContextStringPropertyScriptElement,
+			p_KESKBSKeyBoardShortcutContextString,
+			"KESKBS key board shortcut context string",
+			"KESKBS key board shortcut context string.",
+			StringType,
+			{}
+			kNoAttributeClass,
+		}
+
+		// Key board shortcut string.
+		Property
+		{
+			kKESKBSKeyBoardShortcutStringPropertyScriptElement,
+			p_KESKBSKeyBoardShortcutString,
+			"KESKBS key board shortcut string",
+			"KESKBS key board shortcut string.",
+			StringType,
+			{}
+			kNoAttributeClass,
 		}
 	}
 };
