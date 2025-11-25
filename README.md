@@ -17,6 +17,9 @@ SDK\build\win\objrx64\ASLSupport.lib
 ## extendScript for JavaScript
 ```
 // Edit key board shortcut.
+// After editing, you must save using
+// app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
+// You might also use it as a temporary shortcut without saving.
 
 // Is user shortcut KBSC area.
 areaFlg = app.menuActions[0].keskbsIsUserShortcutKBSCArea();
@@ -34,9 +37,28 @@ beforeTranslationActionName = app.menuActions[0].keskbsBeforeTranslationActionNa
 areaFlg = app.menuActions[0].keskbsIsUserShortcutKBSCArea();
 if(areaFlg) app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
 
+// Shortcut object.
+numShortcuts = app.menuActions[0].keskbsKeyBoardShortcuts.count();
 
+// Add shortcut.
+context = "DialogContext";
+context = "DefaultContext";
+context = "TableContext";
+context = "TableObjectContext";
+context = "KBSCContext_XMLStructureContext";
+context = "FullScreenContext";
+context = "TextContext";
+app.menuActions[0].keskbsKeyBoardShortcuts.keskbsAdd(context, "Shift+Ctrl+Alt+F1");
 
+// Remove key board shortcut
+app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsRemove();
 
+// Key board shortcut context string.
+contextString = app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutContextString;
+app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutContextString = "DefaultContext";
 
-
+// Key board shortcut string.
+shortcutString = app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutString;
+app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutString = "Shift+Ctrl+Alt+F12";
+app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutString = ""; // Remove
 ```
