@@ -313,6 +313,7 @@ resource VersionedScriptElementInfo(2)
 
 				// Key board shortcut context string.
 				// contextString = app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutContextString;
+				// app.menuActions[0].keskbsKeyBoardShortcuts[0].keskbsKeyBoardShortcutContextString = "DefaultContext";
 				Property{ kKESKBSKeyBoardShortcutContextStringPropertyScriptElement, kReadWrite },
 
 				// Key board shortcut string.

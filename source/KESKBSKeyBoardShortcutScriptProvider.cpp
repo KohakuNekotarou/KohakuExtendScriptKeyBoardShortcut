@@ -39,6 +39,9 @@ public:
 	// HandleMethod
 	virtual ErrorCode HandleMethod(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript);
 
+	// AccessProperty
+	virtual ErrorCode AccessProperty(ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript);
+
 protected:
 	// Get the number of child objects in a collection on the given parent.
 	virtual int32 GetNumObjects(const IScriptRequestData* iScriptRequestData, IScript* iScript);
@@ -65,7 +68,8 @@ CREATE_PMINTERFACE(KESKBSKeyBoardShortcutScriptProvider, kKESKBSKeyBoardShortcut
 KESKBSKeyBoardShortcutScriptProvider::KESKBSKeyBoardShortcutScriptProvider(IPMUnknown* boss) : RepresentScriptProvider(boss){}
 
 // HandleMethod
-ErrorCode KESKBSKeyBoardShortcutScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript)
+ErrorCode KESKBSKeyBoardShortcutScriptProvider::HandleMethod(
+	ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript)
 {
 	ErrorCode result = kFailure;
 
@@ -83,6 +87,31 @@ ErrorCode KESKBSKeyBoardShortcutScriptProvider::HandleMethod(ScriptID scriptID, 
 	}
 	default:
 		return RepresentScriptProvider::HandleMethod(scriptID, iScriptRequestData, iScript);
+	}
+
+	return result;
+}
+
+// AccessProperty
+ErrorCode KESKBSKeyBoardShortcutScriptProvider::AccessProperty(
+	ScriptID scriptID_prop, IScriptRequestData* iScriptRequestData, IScript* iScript)
+{
+	ErrorCode result = kFailure;
+
+	switch (scriptID_prop.Get())
+	{
+	case p_KESKBSKeyBoardShortcutContextString:
+	{
+		result = this->GetSetContextStringOrShortcutString(scriptID_prop, iScriptRequestData, iScript, "ContextString");
+		break;
+	}
+	case p_KESKBSKeyBoardShortcutString:
+	{
+		result = this->GetSetContextStringOrShortcutString(scriptID_prop, iScriptRequestData, iScript, "ShortcutString");
+		break;
+	}
+	default:
+		return RepresentScriptProvider::AccessProperty(scriptID_prop, iScriptRequestData, iScript);
 	}
 
 	return result;
@@ -393,6 +422,7 @@ ErrorCode KESKBSKeyBoardShortcutScriptProvider::GetSetContextStringOrShortcutStr
 		}
 
 		// Processing request data
+		PMString pMString_shortcut;
 		if (iScriptRequestData->IsPropertyGet()) // Get
 		{
 			// Append return data
@@ -402,29 +432,90 @@ ErrorCode KESKBSKeyBoardShortcutScriptProvider::GetSetContextStringOrShortcutStr
 			}
 			else if (pMString_target == "ShortcutString")
 			{
-				PMString pMString_shortcutString = Utils<IShortcutUtils>()->GetShortcutString(
+				pMString_shortcut = Utils<IShortcutUtils>()->GetShortcutString(
 					vector_keyOut[int32_index], vector_modsOut[int32_index]);
 
-				iScriptRequestData->AppendReturnData(iScript, scriptID_prop, ScriptData(pMString_shortcutString));
+				iScriptRequestData->AppendReturnData(iScript, scriptID_prop, ScriptData(pMString_shortcut));
 			}
 		}
 		else if (iScriptRequestData->IsPropertyPut()) // Set
 		{
-			/*
 			// ---------------------------------------------------------------------------------------
 			// Extract request data
-			status = iScriptRequestData->ExtractRequestData(scriptID_property.Get(), scriptData);
-			if (status != kSuccess) break;
+			result = iScriptRequestData->ExtractRequestData(scriptID_prop.Get(), scriptData);
+			if (result != kSuccess) break;
 
-			status = scriptData.GetPMReal(&pMReal_unit);
-			if (status != kSuccess) break;
+			result = scriptData.GetPMString(pMString_shortcut);
+			if (result != kSuccess) break;
+
+			if (pMString_target == "ContextString")
+			{
+				// validate.
+				if (
+					pMString_shortcut != "DialogContext" &&
+					pMString_shortcut != "DefaultContext" &&
+					pMString_shortcut != "TableContext" &&
+					pMString_shortcut != "TableObjectContext" &&
+					pMString_shortcut != "KBSCContext_XMLStructureContext" &&
+					pMString_shortcut != "FullScreenContext" &&
+					pMString_shortcut != "TextContext"
+					)
+				{
+					return Utils<IScriptErrorUtils>()->
+						SetMissingRequiredParameterErrorData(iScriptRequestData, p_KESKBSKeyBoardShortcutContextString);
+				}
+
+				// ---------------------------------------------------------------------------------------
+				// Translation
+				IShortcutContext* iShortcutContext = iShortcutManager->QueryShortcutContextByName(pMString_shortcut);
+				if (iShortcutContext == nil) break;
+
+				PMString pMString_shortcutContextLocalString = iShortcutContext->GetShortcutContextString();
+
+				// ---------------------------------------------------------------------------------------
+				// Set
+				vector_contextStrOut[int32_index] = pMString_shortcutContextLocalString;
+			}
+			else if (pMString_target == "ShortcutString")
+			{
+				if (pMString_shortcut != "") {
+					// ---------------------------------------------------------------------------------------
+					// Parse shortcut string.
+					VirtualKey virtualKey_keyOut;
+					int16 int16_modsOut;
+					Utils<IShortcutUtils>()->ParseShortcutString(pMString_shortcut, &virtualKey_keyOut, &int16_modsOut);
+
+					if (virtualKey_keyOut == kVirtualNullKey)
+					{
+						return Utils<IScriptErrorUtils>()->
+							SetMissingRequiredParameterErrorData(iScriptRequestData, p_KESKBSKeyBoardShortcutString);
+					}
+
+					// ---------------------------------------------------------------------------------------
+					// Set
+					vector_keyOut[int32_index] = virtualKey_keyOut;
+					vector_modsOut[int32_index] = int16_modsOut;
+				}
+				else
+				{
+					// Remove
+					vector_contextStrOut.erase(vector_contextStrOut.begin() + int32_index);
+					vector_keyOut.erase(vector_keyOut.begin() + int32_index);
+					vector_modsOut.erase(vector_modsOut.begin() + int32_index);
+				}
+			}
 
 			// ---------------------------------------------------------------------------------------
-			// Set.
-			pMReal_point = iUnitOfMeasure->UnitsToPoints(pMReal_unit);
+			// RemoveAllShortcutsForAction
+			iShortcutManager->RemoveAllShortcutsForAction(int32_actionID);
 
-			iLinkCaptionPrefs->SetFrameOffset(pMReal_point);
-					*/
+			// ---------------------------------------------------------------------------------------
+			// Add shortcut.
+			for (int32 i = 0; i < vector_contextStrOut.size(); i++)
+			{
+				iShortcutManager->AddShortcut(
+					int32_actionID, vector_contextStrOut[i], vector_keyOut[i], vector_modsOut[i]);
+			}
 		}
 		result = kSuccess;
 
