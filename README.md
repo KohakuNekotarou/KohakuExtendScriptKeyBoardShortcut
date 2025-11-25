@@ -16,62 +16,26 @@ SDK\build\win\objrx64\ASLSupport.lib
 
 ## extendScript for JavaScript
 ```
-// Edit caption preferences.
+// Edit key board shortcut.
 
-// Caption preferences object.
-captionPrefs = app.kescpCaptionPreferences;
+// Is user shortcut KBSC area.
+areaFlg = app.menuActions[0].keskbsIsUserShortcutKBSCArea();
 
-// Get num info providers.
-NumInfoProviders = app.kescpCaptionPreferences.kescpGetNumInfoProviders();
+// Remove all shortcuts for action.
+app.menuActions[0].keskbsRemoveAllShortcutsForAction();
 
-// Get info provider description string.
-infoProviderDescriptionString = app.kescpCaptionPreferences.kescpGetInfoProviderDescriptionString(0);
+// Before translation action area.
+beforeTranslationActionArea = app.menuActions[0].keskbsBeforeTranslationActionArea;
 
-// Caption alignment.
-captionAlignment = app.kescpCaptionPreferences.kescpCaptionAlignment;
-app.kescpCaptionPreferences.kescpCaptionAlignment = "Below";
-app.kescpCaptionPreferences.kescpCaptionAlignment = "Above";
-app.kescpCaptionPreferences.kescpCaptionAlignment = "Left";
-app.kescpCaptionPreferences.kescpCaptionAlignment = "Right";
+// Before translation action name.
+beforeTranslationActionName = app.menuActions[0].keskbsBeforeTranslationActionName;
 
-// Frame offset.
-app.kescpCaptionPreferences.kescpFrameOffset = 5;
+// Save current shortcut set file.
+app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
 
-// Caption paragraph style ID.
-captionParagraphStyleID = app.kescpCaptionPreferences.kescpCaptionParagraphStyleID;
-app.kescpCaptionPreferences.kescpCaptionParagraphStyleID = app.activeDocument.paragraphStyles[0].id;
 
-// Caption layer name.
-captionLayerName = app.kescpCaptionPreferences.kescpCaptionLayerName;
-app.kescpCaptionPreferences.kescpCaptionLayerName = captionLayerName;
 
-// Group caption with image.
-groupCaptionWithImage = app.kescpCaptionPreferences.kescpGroupCaptionWithImage;
-app.kescpCaptionPreferences.kescpGroupCaptionWithImage = true;
 
-// Caption lines object.
-CaptionLines = app.kescpCaptionPreferences.kescpCaptionLines;
-CaptionLines.count();
 
-// Add.
-// KescpCaptionLinesObject does not have an ID; it can only be accessed by index.
-// Added objects are appended to the end.
-infoProviderDescriptionString = app.kescpCaptionPreferences.kescpGetInfoProviderDescriptionString(0);
-app.kescpCaptionPreferences.kescpCaptionLines.kescpAdd("Kohaku", infoProviderDescriptionString, "Nekotarou");
 
-// Remove.
-app.kescpCaptionPreferences.kescpCaptionLines[0].kescpRemove();
-
-// Before string.
-beforeString = app.kescpCaptionPreferences.kescpCaptionLines[0].kescpBeforeString;
-app.kescpCaptionPreferences.kescpCaptionLines[0].kescpBeforeString = "Kohaku";
-
-// Link info provider name.
-linkInfoProviderName = app.kescpCaptionPreferences.kescpCaptionLines[0].kescpLinkInfoProviderName;
-infoProviderDescriptionString = app.kescpCaptionPreferences.kescpGetInfoProviderDescriptionString(0);
-app.kescpCaptionPreferences.kescpCaptionLines[0].kescpLinkInfoProviderName = infoProviderDescriptionString;
-
-// After string.
-AfterString = app.kescpCaptionPreferences.kescpCaptionLines[0].kescpAfterString;
-app.kescpCaptionPreferences.kescpCaptionLines[0].kescpAfterString = "Nekotarou";
 ```
