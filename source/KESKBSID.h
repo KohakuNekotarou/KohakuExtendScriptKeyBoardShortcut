@@ -53,6 +53,7 @@ DECLARE_PMID(kClassIDSpace, kKESKBSScriptProviderBoss, kKESKBSPrefix + 0)
 DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutScriptProviderBoss, kKESKBSPrefix + 1)
 DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutScriptObjectBoss, kKESKBSPrefix + 2)
 DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutSetScriptObjectBoss, kKESKBSPrefix + 3)
+DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutSetScriptProviderBoss, kKESKBSPrefix + 4)
 
 // InterfaceIDs:
 DECLARE_PMID(kInterfaceIDSpace, IID_IKESKBSIDLETASK, kKESKBSPrefix + 0)
@@ -83,11 +84,14 @@ DECLARE_PMID(kScriptInfoIDSpace, kKESKBSSaveCurrentShortcutSetFileMethodScriptEl
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutContextStringPropertyScriptElement, kKESKBSPrefix + 8)
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutStringPropertyScriptElement, kKESKBSPrefix + 9)
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSGetNumSetsMethodScriptElement, kKESKBSPrefix + 10)
+DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutSetObjectScriptElement, kKESKBSPrefix + 11)
 
 // GUIDs for script objects:
 // Visual Studio : Tools > Generate GUID
 #define kKESKBSKeyBoardShortcutObject_CLSID { 0xf9a6278e, 0xc3c, 0x4345, { 0xb1, 0xc2, 0x25, 0x37, 0x61, 0x99, 0x39, 0x31 } }
 #define kKESKBSKeyBoardShortcutsObject_CLSID { 0xcf8c4b1c, 0x78e5, 0x4072, { 0x96, 0x48, 0x1c, 0x02, 0x45, 0xe2, 0xfa, 0xde } }
+#define kKESKBSKeyBoardShortcutSetObject_CLSID { 0x5d8661ca, 0xe810, 0x4809, { 0x96, 0xa1, 0xad, 0x01, 0x4c, 0xe8, 0x10, 0xfe } }
+#define kKESKBSKeyBoardShortcutSetsObject_CLSID { 0x46bf2be7, 0x9d39, 0x4299, { 0x88, 0x2a, 0x1f, 0xeb, 0xed, 0x53, 0xc7, 0x4a } }
 
 // "About Plug-ins" sub-menu:
 #define kKESKBSAboutMenuKey			kKESKBSStringPrefix "kKESKBSAboutMenuKey"

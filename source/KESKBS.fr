@@ -133,6 +133,15 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 		}
 	},
 
+	Class
+	{
+		kKESKBSKeyBoardShortcutSetScriptProviderBoss,
+		kBaseScriptProviderBoss,
+		{
+			IID_ISCRIPTPROVIDER, kKESKBSKeyBoardShortcutSetScriptProviderImpl,
+		}
+	},
+
 	AddIn
 	{
 		kSessionBoss,
@@ -465,16 +474,36 @@ resource VersionedScriptElementInfo(2)
 
 		// ---------------------------------------------------------------------------------------
 		// Key board shortcut set script provider
-		/*
 		Provider
 		{
 			kKESKBSKeyBoardShortcutSetScriptProviderBoss, // provider boss ID
 			{
-				
+				// Parent
+				Parent{ kGeneralPrefsObjectScriptElement }, 
+
+				// Key board shortcut set object.
+				// app.generalPreferences.keskbsKeyBoardShortcutSets.count();
+				RepresentObject{ kKESKBSKeyBoardShortcutSetObjectScriptElement },
 			}
 		}
 
-		*/
+		// Key board shortcut set object
+		Object
+		{
+			kKESKBSKeyBoardShortcutSetObjectScriptElement, // Script element ID
+			c_KESKBSKeyBoardShortcutSet, // ScriptID
+			"KESKBS key board shortcut set", // Name
+			"KESKBS key board shortcut set.", // Description
+			kKESKBSKeyBoardShortcutSetObject_CLSID, // Windows CLSID
+
+			c_KESKBSKeyBoardShortcutSets, // Collection
+			"KESKBS key board shortcut sets", // Name
+			"KESKBS key board shortcut sets.", // Description
+			kKESKBSKeyBoardShortcutSetsObject_CLSID, // Windows CLSID
+
+			kNonIDBasedObjectScriptElement, // base object script element ID
+			kBasicSuiteScriptElement,	// suite script element ID
+		}
 	}
 };
 

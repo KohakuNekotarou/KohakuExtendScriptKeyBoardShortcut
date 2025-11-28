@@ -6,12 +6,15 @@
 
 // Interface includes:
 #include "IApplication.h"
+#include "IActionManager.h"
+#include "IIdleTask.h"
+#include "IIdleTaskMgr.h"
 #include "IScript.h"
 #include "IScriptRequestData.h"
 
 // General includes:
 #include "CAlert.h" // CAlert::InformationAlert(Msg);
-#include "keyboarddefs.h" // for kVirtualNullKey.
+#include "KBSCEditorDlgID.h" // for kKBSCEditorDlgActionID
 
 // Project includes:
 #include "KESKBSID.h"
@@ -38,13 +41,24 @@ protected:
 	virtual ErrorCode AppendNthObject(const IScriptRequestData* iScriptRequestData, IScript* iScript, int32 int32_n, ScriptList& scriptList);
 
 private:
+	// IsOpenedShortcutDialog
+	void IsOpenedShortcutDialog();
+
+	static bool16 openedShortcutDialogFlg;
 };
 
 // Make the implementation available to the application.
 CREATE_PMINTERFACE(KESKBSKeyBoardShortcutSetScriptProvider, kKESKBSKeyBoardShortcutSetScriptProviderImpl)
 
+// openedShortcutDialogFlg
+bool16 KESKBSKeyBoardShortcutSetScriptProvider::openedShortcutDialogFlg = kFalse;
+
 // Constructor
-KESKBSKeyBoardShortcutSetScriptProvider::KESKBSKeyBoardShortcutSetScriptProvider(IPMUnknown* boss) : RepresentScriptProvider(boss){}
+KESKBSKeyBoardShortcutSetScriptProvider::KESKBSKeyBoardShortcutSetScriptProvider(IPMUnknown* boss)
+	: RepresentScriptProvider(boss)
+{
+	this->IsOpenedShortcutDialog();
+}
 
 // HandleMethod
 ErrorCode KESKBSKeyBoardShortcutSetScriptProvider::HandleMethod(
@@ -89,7 +103,6 @@ ErrorCode KESKBSKeyBoardShortcutSetScriptProvider::AccessProperty(
 // GetNumObjects
 int32 KESKBSKeyBoardShortcutSetScriptProvider::GetNumObjects(const IScriptRequestData* iScriptRequestData, IScript* iScript)
 {
-
 	int32 int32_numObjects = 0;
 	do
 	{
@@ -113,4 +126,48 @@ ErrorCode KESKBSKeyBoardShortcutSetScriptProvider::AppendNthObject(const IScript
 	} while (false);
 
 	return result;
+}
+
+// IsOpenedShortcutDialog
+void KESKBSKeyBoardShortcutSetScriptProvider::IsOpenedShortcutDialog()
+{
+	do
+	{
+		// Have you ever opened the shortcut dialog.
+		if (KESKBSKeyBoardShortcutSetScriptProvider::openedShortcutDialogFlg == kFalse)
+		{
+			// ---------------------------------------------------------------------------------------
+			// InstallTask
+			// Insert an idle task before opening modal dialog to prevent the program from stopping.
+			InterfacePtr<IIdleTask> iIdleTask(::GetExecutionContextSession(), IID_IKESKBSIDLETASK);
+			if (iIdleTask == nil) break;
+
+			InterfacePtr<IIdleTaskMgr> idleTaskMgr(::GetExecutionContextSession(), ::UseDefaultIID());
+			if (idleTaskMgr == nil) break;
+
+			// If the task wasn't installed or it is currently running, returns IIdleTask::kEndOfTime.
+			if (idleTaskMgr->RemoveTask(iIdleTask) == IIdleTask::kEndOfTime)
+			{
+				// AddTask
+				idleTaskMgr->AddTask(iIdleTask, 0);
+			}
+
+			// ---------------------------------------------------------------------------------------
+			// Open edit shortcut dialog
+			InterfacePtr<IApplication> iApplication(::GetExecutionContextSession()->QueryApplication());
+			if (iApplication == nil) break;
+
+			InterfacePtr<IActionManager> iActionManager(iApplication->QueryActionManager());
+			if (iActionManager == nil) break;
+
+			iActionManager->PerformAction(::GetExecutionContextSession()->GetActiveContext(), kKBSCEditorDlgActionID);
+
+			// ---------------------------------------------------------------------------------------
+			// RemoveTask
+			// When modal dialog closes, the program resumes.
+			idleTaskMgr->RemoveTask(iIdleTask);
+
+			KESKBSKeyBoardShortcutSetScriptProvider::openedShortcutDialogFlg = kTrue;
+		}
+	} while (false);
 }
