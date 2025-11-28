@@ -45,6 +45,7 @@ enum KESKBSScriptEvents
 	e_KESKBSIsUserShortcutKBSCArea = 'KIUA',
 	e_KESKBSRemoveAllShortcutsForAction = 'KRAS',
 	e_KESKBSSaveCurrentShortcutSetFile = 'KSSF',
+	e_KESKBSGetNumSets = 'KGNS',
 };
 
 // Property IDs

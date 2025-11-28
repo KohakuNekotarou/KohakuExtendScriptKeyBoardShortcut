@@ -23,3 +23,4 @@
 REGISTER_PMINTERFACE(KESKBSScriptProvider, kKESKBSScriptProviderImpl)
 REGISTER_PMINTERFACE(KESKBSKeyBoardShortcutScriptProvider, kKESKBSKeyBoardShortcutScriptProviderImpl)
 REGISTER_PMINTERFACE(KESKBSKeyBoardShortcutScript, kKESKBSKeyBoardShortcutScriptImpl)
+REGISTER_PMINTERFACE(KESKBSIdleTask, kKESKBSIdleTaskImpl)

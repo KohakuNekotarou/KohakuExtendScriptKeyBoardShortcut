@@ -54,11 +54,13 @@ DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutScriptProviderBoss, kKESKBSPr
 DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutScriptObjectBoss, kKESKBSPrefix + 2)
 
 // InterfaceIDs:
+DECLARE_PMID(kInterfaceIDSpace, IID_IKESKBSIDLETASK, kKESKBSPrefix + 0)
 
 // ImplementationIDs:
 DECLARE_PMID(kImplementationIDSpace, kKESKBSScriptProviderImpl, kKESKBSPrefix + 0 )
 DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutScriptProviderImpl, kKESKBSPrefix + 1)
 DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutScriptImpl, kKESKBSPrefix + 2)
+DECLARE_PMID(kImplementationIDSpace, kKESKBSIdleTaskImpl, kKESKBSPrefix + 3)
 
 // ActionIDs:
 DECLARE_PMID(kActionIDSpace, kKESKBSAboutActionID, kKESKBSPrefix + 0)
@@ -77,6 +79,7 @@ DECLARE_PMID(kScriptInfoIDSpace, kKESKBSRemoveAllShortcutsForActionMethodScriptE
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSSaveCurrentShortcutSetFileMethodScriptElement, kKESKBSPrefix + 7)
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutContextStringPropertyScriptElement, kKESKBSPrefix + 8)
 DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutStringPropertyScriptElement, kKESKBSPrefix + 9)
+DECLARE_PMID(kScriptInfoIDSpace, kKESKBSGetNumSetsMethodScriptElement, kKESKBSPrefix + 10)
 
 // GUIDs for script objects:
 // Visual Studio : Tools > Generate GUID

@@ -121,6 +121,16 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 		}
 	},
 
+	AddIn
+	{
+		kSessionBoss,
+		kInvalidClass,
+		{
+			// Idle task itself, implementation of IIdleTask
+			IID_IKESKBSIDLETASK,  kKESKBSIdleTaskImpl,
+		}
+	},
+
 }}};
 
 /*  
@@ -222,6 +232,10 @@ resource VersionedScriptElementInfo(2)
 				// Save current shortcut set file.
 				// app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
 				Method{ kKESKBSSaveCurrentShortcutSetFileMethodScriptElement },
+
+				// Get num sets.
+				// app.generalPreferences.keskbsGetNumSets();
+				Method{ kKESKBSGetNumSetsMethodScriptElement },
 			}
 		}
 
@@ -255,6 +269,17 @@ resource VersionedScriptElementInfo(2)
 			e_KESKBSSaveCurrentShortcutSetFile,
 			"KESKBS save current shortcut set file",
 			"KESKBS save current shortcut set file.",
+			VoidType,
+			{}
+		}
+
+		// Get num sets..
+		Method
+		{
+			kKESKBSGetNumSetsMethodScriptElement,
+			e_KESKBSGetNumSets,
+			"KESKBS get num sets",
+			"KESKBS get num sets.",
 			VoidType,
 			{}
 		}
