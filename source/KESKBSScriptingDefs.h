@@ -35,6 +35,7 @@ enum KESKBSScriptClasses
 {
 	c_KESKBSKeyBoardShortcut = 'KKSt',
 	c_KESKBSKeyBoardShortcuts = 'KKSs',
+	c_KESKBSKeyBoardShortcutSet = 'KKSS',
 };
 
 // Method IDs

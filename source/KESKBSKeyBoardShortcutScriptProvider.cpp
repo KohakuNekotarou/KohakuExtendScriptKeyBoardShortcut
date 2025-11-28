@@ -15,12 +15,6 @@
 #include "IShortcutManager.h"
 #include "IShortcutUtils.h"
 
-
-
-#include "LocaleSetting.h"
-
-
-
 // General includes:
 #include "CAlert.h" // CAlert::InformationAlert(Msg);
 #include "keyboarddefs.h" // for kVirtualNullKey.

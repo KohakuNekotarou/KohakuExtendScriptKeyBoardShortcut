@@ -45,6 +45,8 @@
 
 #include "AppUIID.h" // for kGeneralPrefsObjectScriptElement
 
+//#include "IStringData.h"
+
 // Project includes:
 #include "KESKBSID.h"
 #include "GenericID.h"
@@ -104,6 +106,16 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 
 	Class
 	{
+		kKESKBSKeyBoardShortcutScriptObjectBoss,
+		kBaseProxyScriptObjectBoss,
+		{
+			IID_ISCRIPT, kKESKBSKeyBoardShortcutScriptImpl,
+			IID_IINTDATA, kIntDataImpl,
+		}
+	},
+
+	Class
+	{
 		kKESKBSKeyBoardShortcutScriptProviderBoss,
 		kBaseScriptProviderBoss,
 		{
@@ -113,11 +125,11 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 
 	Class
 	{
-		kKESKBSKeyBoardShortcutScriptObjectBoss,
+		kKESKBSKeyBoardShortcutSetScriptObjectBoss,
 		kBaseProxyScriptObjectBoss,
 		{
-			IID_ISCRIPT, kKESKBSKeyBoardShortcutScriptImpl,
-			IID_IINTDATA, kIntDataImpl,
+			IID_ISCRIPT, kKESKBSKeyBoardShortcutSetScriptImpl,
+			IID_ISTRINGDATA, kStringDataImpl,
 		}
 	},
 
@@ -233,9 +245,36 @@ resource VersionedScriptElementInfo(2)
 				// app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
 				Method{ kKESKBSSaveCurrentShortcutSetFileMethodScriptElement },
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 				// Get num sets.
 				// app.generalPreferences.keskbsGetNumSets();
 				Method{ kKESKBSGetNumSetsMethodScriptElement },
+
+
+
+
+
+
+
+
+
+
+
+
 			}
 		}
 
@@ -347,7 +386,7 @@ resource VersionedScriptElementInfo(2)
 			}
 		}
 
-		// Shortcut object
+		// Key board shortcut object
 		Object
 		{
 			kKESKBSKeyBoardShortcutObjectScriptElement, // Script element ID
@@ -359,7 +398,7 @@ resource VersionedScriptElementInfo(2)
 			c_KESKBSKeyBoardShortcuts, // Collection
 			"KESKBS key board shortcuts", // Name
 			"KESKBS key board shortcuts.", // Description
-			kKESKBShortcutsObject_CLSID, // Windows CLSID
+			kKESKBSKeyBoardShortcutsObject_CLSID, // Windows CLSID
 
 			kNonIDBasedObjectScriptElement, // base object script element ID
 			kBasicSuiteScriptElement,	// suite script element ID
@@ -423,6 +462,19 @@ resource VersionedScriptElementInfo(2)
 			{}
 			kNoAttributeClass,
 		}
+
+		// ---------------------------------------------------------------------------------------
+		// Key board shortcut set script provider
+		/*
+		Provider
+		{
+			kKESKBSKeyBoardShortcutSetScriptProviderBoss, // provider boss ID
+			{
+				
+			}
+		}
+
+		*/
 	}
 };
 
