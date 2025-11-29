@@ -75,6 +75,14 @@ resource PluginVersion (kSDKDefPluginVersionResourceID)
 	kKESKBSVersion
 };
 
+// ---------------------------------------------------------------------------------------
+resource ImplementationAlias(1)
+{
+	{
+		kKESKBSOpenEditCloseShortcutDialogFlgDataImpl, kIntDataImpl,
+	}
+};
+
 /*  
  * The ExtraPluginInfo resource adds extra information to the Missing Plug-in dialog
  * that is popped when a document containing this plug-in's data is opened when
@@ -148,7 +156,10 @@ resource ClassDescriptionTable(kSDKDefClassDescriptionTableResourceID)
 		kInvalidClass,
 		{
 			// Idle task itself, implementation of IIdleTask
-			IID_IKESKBSIDLETASK,  kKESKBSIdleTaskImpl,
+			IID_IKESKBSIDLETASK, kKESKBSIdleTaskImpl,
+
+			// kKESKBSOpenEditCloseShortcutDialogFlgDataImpl
+			IID_IKESKBSOPENEDITCLOSESHORTCUTDIALOGFLG, kKESKBSOpenEditCloseShortcutDialogFlgDataImpl,
 		}
 	},
 
@@ -321,6 +332,14 @@ resource VersionedScriptElementInfo(2)
 			{}
 		}
 
+
+
+
+
+
+
+
+
 		// Get num sets..
 		Method
 		{
@@ -331,6 +350,13 @@ resource VersionedScriptElementInfo(2)
 			VoidType,
 			{}
 		}
+
+
+
+
+
+
+
 
 		// Before translation action area.
 		Property

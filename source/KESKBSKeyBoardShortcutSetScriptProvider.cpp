@@ -57,7 +57,6 @@ bool16 KESKBSKeyBoardShortcutSetScriptProvider::openedShortcutDialogFlg = kFalse
 KESKBSKeyBoardShortcutSetScriptProvider::KESKBSKeyBoardShortcutSetScriptProvider(IPMUnknown* boss)
 	: RepresentScriptProvider(boss)
 {
-	this->IsOpenedShortcutDialog();
 }
 
 // HandleMethod
@@ -107,6 +106,14 @@ int32 KESKBSKeyBoardShortcutSetScriptProvider::GetNumObjects(const IScriptReques
 	do
 	{
 		
+
+
+
+
+
+
+
+
 	} while (false);
 
 	return int32_numObjects;
@@ -145,12 +152,13 @@ void KESKBSKeyBoardShortcutSetScriptProvider::IsOpenedShortcutDialog()
 			InterfacePtr<IIdleTaskMgr> idleTaskMgr(::GetExecutionContextSession(), ::UseDefaultIID());
 			if (idleTaskMgr == nil) break;
 
-			// If the task wasn't installed or it is currently running, returns IIdleTask::kEndOfTime.
-			if (idleTaskMgr->RemoveTask(iIdleTask) == IIdleTask::kEndOfTime)
-			{
-				// AddTask
-				idleTaskMgr->AddTask(iIdleTask, 0);
-			}
+			// ---------------------------------------------------------------------------------------
+			// RemoveTask
+			idleTaskMgr->RemoveTask(iIdleTask);
+
+			// ---------------------------------------------------------------------------------------
+			// AddTask
+			idleTaskMgr->AddTask(iIdleTask, 0);
 
 			// ---------------------------------------------------------------------------------------
 			// Open edit shortcut dialog

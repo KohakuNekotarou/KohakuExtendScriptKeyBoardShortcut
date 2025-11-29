@@ -26,6 +26,12 @@
 // Interface includes:
 #include "IActionManager.h"
 #include "IApplication.h"
+
+
+#include "IIntData.h"
+
+
+
 #include "IIdleTask.h"
 #include "IIdleTaskMgr.h"
 #include "IKBSCSetsManager.h"
@@ -74,20 +80,12 @@ private:
 	ErrorCode SaveCurrentShortcutSetFile();
 
 	// IsOpenedShortcutDialog
-	ErrorCode IsOpenedShortcutDialog();
-
-	// GetNumSets
-	ErrorCode GetNumSets();
-
-	// Flag indicating whether the shortcut dialog was opened.
-	static bool16 openedShortcutDialogFlg;
+	ErrorCode OpenEditCloseShortcutDialog(KESKBSOpenEditCloseShortcutDialogFlg flg);
 };
 
 // CREATE_PMINTERFACE
 // Binds the C++ implementation class onto its ImplementationID making the C++ code callable by the application.
 CREATE_PMINTERFACE(KESKBSScriptProvider, kKESKBSScriptProviderImpl)
-
-bool16 KESKBSScriptProvider::openedShortcutDialogFlg = kFalse;
 
 // HandleMethod
 ErrorCode KESKBSScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestData* iScriptRequestData, IScript* iScript)
@@ -108,8 +106,10 @@ ErrorCode KESKBSScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestDa
 		result = this->SaveCurrentShortcutSetFile();
 		break;
 
+
+	// test /////////////////////////////////////////////////////////////
 	case e_KESKBSGetNumSets:
-		result = this->GetNumSets();
+		result = this->OpenEditCloseShortcutDialog(KESKBSOpenEditCloseShortcutDialogFlg::kWidgetHierarchy);
 		break;
 
 	default:
@@ -299,67 +299,47 @@ ErrorCode KESKBSScriptProvider::SaveCurrentShortcutSetFile()
 	return status;
 }
 
-// IsOpenedShortcutDialog
-ErrorCode KESKBSScriptProvider::IsOpenedShortcutDialog()
+// OpenEditCloseShortcutDialog
+ErrorCode KESKBSScriptProvider::OpenEditCloseShortcutDialog(KESKBSOpenEditCloseShortcutDialogFlg flg)
 {
 	ErrorCode status = kFailure;
 
 	do
 	{
-		// Have you ever opened the shortcut dialog.
-		if (KESKBSScriptProvider::openedShortcutDialogFlg == kFalse)
+		// ---------------------------------------------------------------------------------------
+		// Set flg
+		InterfacePtr<IIntData> iIntData(::GetExecutionContextSession(), IID_IKESKBSOPENEDITCLOSESHORTCUTDIALOGFLG);
+		if (iIntData == nil) break;
+
+		iIntData->Set(flg);
+
+		// ---------------------------------------------------------------------------------------
+		// Add task
+		// Insert an idle task before opening modal dialog to prevent the program from stopping.
+		InterfacePtr<IIdleTask> iIdleTask(::GetExecutionContextSession(), IID_IKESKBSIDLETASK);
+		if (iIdleTask == nil) break;
+
+		InterfacePtr<IIdleTaskMgr> idleTaskMgr(::GetExecutionContextSession(), ::UseDefaultIID());
+		if (idleTaskMgr == nil) break;
+
+		idleTaskMgr->AddTask(iIdleTask, 0);
+
+		// ---------------------------------------------------------------------------------------
+		// Open edit shortcut dialog
+		InterfacePtr<IApplication> iApplication(::GetExecutionContextSession()->QueryApplication());
+		if (iApplication != nil)
 		{
-			// ---------------------------------------------------------------------------------------
-			// InstallTask
-			// Insert an idle task before opening modal dialog to prevent the program from stopping.
-			InterfacePtr<IIdleTask> iIdleTask(::GetExecutionContextSession(), IID_IKESKBSIDLETASK);
-			if (iIdleTask == nil) break;
-
-			InterfacePtr<IIdleTaskMgr> idleTaskMgr(::GetExecutionContextSession(), ::UseDefaultIID());
-			if (idleTaskMgr == nil) break;
-
-			// If the task wasn't installed or it is currently running, returns IIdleTask::kEndOfTime.
-			if (idleTaskMgr->RemoveTask(iIdleTask) == IIdleTask::kEndOfTime)
-			{
-				// AddTask
-				idleTaskMgr->AddTask(iIdleTask, 0);
-			}
-
-			// ---------------------------------------------------------------------------------------
-			// Open edit shortcut dialog
-			InterfacePtr<IApplication> iApplication(::GetExecutionContextSession()->QueryApplication());
-			if (iApplication == nil) break;
-
 			InterfacePtr<IActionManager> iActionManager(iApplication->QueryActionManager());
-			if (iActionManager == nil) break;
-
-			iActionManager->PerformAction(::GetExecutionContextSession()->GetActiveContext(), kKBSCEditorDlgActionID);
-
-			// ---------------------------------------------------------------------------------------
-			// RemoveTask
-			// When modal dialog closes, the program resumes.
-			idleTaskMgr->RemoveTask(iIdleTask);
-
-			KESKBSScriptProvider::openedShortcutDialogFlg = kTrue;
+			if (iActionManager != nil)
+			{
+				iActionManager->PerformAction(::GetExecutionContextSession()->GetActiveContext(), kKBSCEditorDlgActionID);
+			}
 		}
 
-		status = kSuccess;
-
-	} while (false);
-
-	return status;
-}
-
-// GetNumSets
-ErrorCode KESKBSScriptProvider::GetNumSets()
-{
-	ErrorCode status = kFailure;
-
-	do
-	{
-		// IsOpenedShortcutDialog
-		if (this->IsOpenedShortcutDialog()) break;
-
+		// ---------------------------------------------------------------------------------------
+		// RemoveTask
+		// When modal dialog closes, the program resumes.
+		idleTaskMgr->RemoveTask(iIdleTask);
 		status = kSuccess;
 
 	} while (false);

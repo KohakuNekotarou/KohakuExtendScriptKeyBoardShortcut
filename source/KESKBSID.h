@@ -58,6 +58,10 @@ DECLARE_PMID(kClassIDSpace, kKESKBSKeyBoardShortcutSetScriptProviderBoss, kKESKB
 // InterfaceIDs:
 DECLARE_PMID(kInterfaceIDSpace, IID_IKESKBSIDLETASK, kKESKBSPrefix + 0)
 
+
+
+DECLARE_PMID(kInterfaceIDSpace, IID_IKESKBSOPENEDITCLOSESHORTCUTDIALOGFLG, kKESKBSPrefix + 1)
+
 // ImplementationIDs:
 DECLARE_PMID(kImplementationIDSpace, kKESKBSScriptProviderImpl, kKESKBSPrefix + 0 )
 DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutScriptImpl, kKESKBSPrefix + 1)
@@ -65,6 +69,16 @@ DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutScriptProviderImpl, 
 DECLARE_PMID(kImplementationIDSpace, kKESKBSIdleTaskImpl, kKESKBSPrefix + 3)
 DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutSetScriptImpl, kKESKBSPrefix + 4)
 DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutSetScriptProviderImpl, kKESKBSPrefix + 5)
+
+
+DECLARE_PMID(kImplementationIDSpace, kKESKBSOpenEditCloseShortcutDialogFlgDataImpl, kKESKBSPrefix + 6)
+
+
+
+
+
+
+
 
 // ActionIDs:
 DECLARE_PMID(kActionIDSpace, kKESKBSAboutActionID, kKESKBSPrefix + 0)
@@ -92,6 +106,8 @@ DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutSetObjectScriptElement, 
 #define kKESKBSKeyBoardShortcutsObject_CLSID { 0xcf8c4b1c, 0x78e5, 0x4072, { 0x96, 0x48, 0x1c, 0x02, 0x45, 0xe2, 0xfa, 0xde } }
 #define kKESKBSKeyBoardShortcutSetObject_CLSID { 0x5d8661ca, 0xe810, 0x4809, { 0x96, 0xa1, 0xad, 0x01, 0x4c, 0xe8, 0x10, 0xfe } }
 #define kKESKBSKeyBoardShortcutSetsObject_CLSID { 0x46bf2be7, 0x9d39, 0x4299, { 0x88, 0x2a, 0x1f, 0xeb, 0xed, 0x53, 0xc7, 0x4a } }
+
+typedef enum { kExportSet = 1, kWidgetHierarchy = 2} KESKBSOpenEditCloseShortcutDialogFlg;
 
 // "About Plug-ins" sub-menu:
 #define kKESKBSAboutMenuKey			kKESKBSStringPrefix "kKESKBSAboutMenuKey"
