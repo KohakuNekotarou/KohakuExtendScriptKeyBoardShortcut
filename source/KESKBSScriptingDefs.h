@@ -48,6 +48,7 @@ enum KESKBSScriptEvents
 	e_KESKBSRemoveAllShortcutsForAction = 'KRAS',
 	e_KESKBSSaveCurrentShortcutSetFile = 'KSSF',
 	e_KESKBSGetNumSets = 'KGNS',
+	e_KESKBSExportCurrentShortcutSet = 'KESS',
 };
 
 // Property IDs

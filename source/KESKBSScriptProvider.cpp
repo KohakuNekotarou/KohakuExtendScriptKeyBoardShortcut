@@ -106,11 +106,9 @@ ErrorCode KESKBSScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestDa
 		result = this->SaveCurrentShortcutSetFile();
 		break;
 
-
-	// test /////////////////////////////////////////////////////////////
-	case e_KESKBSGetNumSets:
+	case e_KESKBSExportCurrentShortcutSet:
 		//result = this->OpenEditCloseShortcutDialog(KESKBSOpenEditCloseShortcutDialogFlg::kExportSet);
-		result = this->OpenEditCloseShortcutDialog(KESKBSOpenEditCloseShortcutDialogFlg::kWidgetHierarchy);
+		result = this->OpenEditCloseShortcutDialog(KESKBSOpenEditCloseShortcutDialogFlg::kQueryWidget);
 		break;
 
 	default:

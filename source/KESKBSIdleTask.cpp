@@ -29,10 +29,23 @@
 #include "IDialogController.h"
 #include "IDialogMgr.h"
 #include "IDropDownListController.h"
+#include "IEditBoxAttributes.h"
 #include "IIdleTaskMgr.h"
+#include "IListBoxController.h"
 #include "IMenuUtils.h"
-#include "ITextControlData.h"
 #include "IStaticTextAttributes.h"
+#include "IStringListControlData.h"
+#include "ITextControlData.h"
+
+
+
+
+
+
+
+
+
+
 
 
 #include "IIntData.h"
@@ -41,7 +54,7 @@
 
 #include "IWindow.h"
 
-
+#include "IPNGIconAttributes.h"
 
 #include "IBooleanControlData.h"
 #include "IDialogController.h"
@@ -77,9 +90,9 @@ private:
 
 	void ExportCurrentKeyBoardShortcutSet(IWindow* iWindow);
 
-	void kKBSCQueryEditorDialogWidgetHierarchy(IWindow* iWindow);
+	void KBSCQueryKeyBoardShortcutEditorDialogWidget(IWindow* iWindow);
 
-	void QueryWidgetHierarchy(IPanelControlData* iPanelControlData, PMString& pMString_result);
+	void QueryWidget(IPanelControlData* iPanelControlData, PMString& pMString_result);
 };
 
 CREATE_PMINTERFACE(KESKBSIdleTask, kKESKBSIdleTaskImpl)
@@ -119,8 +132,8 @@ uint32 KESKBSIdleTask::RunTask(uint32 appFlags, IdleTimer* timeCheck)
 				this->ExportCurrentKeyBoardShortcutSet(iWindow);
 				break;
 
-			case KESKBSOpenEditCloseShortcutDialogFlg::kWidgetHierarchy:
-				this->kKBSCQueryEditorDialogWidgetHierarchy(iWindow);
+			case KESKBSOpenEditCloseShortcutDialogFlg::kQueryWidget:
+				this->KBSCQueryKeyBoardShortcutEditorDialogWidget(iWindow);
 				break;
 			}
 
@@ -160,7 +173,7 @@ void KESKBSIdleTask::ExportCurrentKeyBoardShortcutSet(IWindow* iWindow)
 	} while (false);
 }
 
-void KESKBSIdleTask::kKBSCQueryEditorDialogWidgetHierarchy(IWindow* iWindow)
+void KESKBSIdleTask::KBSCQueryKeyBoardShortcutEditorDialogWidget(IWindow* iWindow)
 {
 	do
 	{
@@ -170,15 +183,50 @@ void KESKBSIdleTask::kKBSCQueryEditorDialogWidgetHierarchy(IWindow* iWindow)
 		// ---------------------------------------------------------------------------------------
 		// 
 		PMString pMString_result;
-		this->QueryWidgetHierarchy(iPanelControlData, pMString_result);
+		this->QueryWidget(iPanelControlData, pMString_result);
 
 		CAlert::InformationAlert(pMString_result);
 
 	} while (false);
 }
 
-void KESKBSIdleTask::QueryWidgetHierarchy(IPanelControlData* iPanelControlData, PMString& pMString_result)
+void KESKBSIdleTask::QueryWidget(IPanelControlData* iPanelControlData, PMString& pMString_result)
 {
+	std::vector<PMString> vector_pMString_widget{
+		"",
+		"kKBSCEditorDlgId",
+		"kKBSCActionsListWidgetId",
+		"kKBSCShortcutsListWidgetId",
+		"kKBSCShortcutEditBoxWidgetId",
+		"kKBSCCurrentActionTextWidgetId",
+		"kKBSCAssignButtonWidgetId",
+		"kKBSCAreaRowWidgetId",
+		"kKBSCSetsComboWidgetId",
+		"kKBSCProductAreasComboWidgetId",
+		"kKBSCDuplicateButtonWidgetId",
+		"kKBSCDeleteButtonWidgetId",
+		"kKBSCSaveButtonWidgetId",
+		"kKBSCExportButtonWidgetId",
+		"kKBSCDuplicateDlgId",
+		"kKBSCNewNameEditBoxWidgetId",
+		"kKBSCBasedOnComboWidgetId",
+		"kKBSCSetLabelWidgetId",
+		"kProductAreaLabelWidgetId",
+		"kCommandsLabelWidgetId",
+		"kKBSCGroupWidgetId",
+		"kPressLabelWidgetId",
+		"kCurrentLabelWidgetId",
+		"kKBSCGroup2WidgetId",
+		"kNameLabelWidgetId",
+		"kBasedOnLabelWidgetId",
+		"kKBSCRemoveButtonWidgetId",
+		"kKBSCContextListWidgetID",
+		"kContextLabelWidgetID",
+		"kKBSCPsIconWidgetID",
+		"kKBSCAiIconWidgetID",
+		"kPsAiIconPanelWidgetID"
+	};
+
 	do
 	{
 		int32 length = iPanelControlData->Length();
@@ -193,40 +241,55 @@ void KESKBSIdleTask::QueryWidgetHierarchy(IPanelControlData* iPanelControlData, 
 
 			// ---------------------------------------------------------------------------------------
 			// Query widget
+			PMString pMString_widgetInfo = "";
 			InterfacePtr<IPanelControlData> iPanelControlData_lower(iControlView, ::UseDefaultIID());
 			if (iPanelControlData_lower == nil) { // nil
 
-				PMString pMString_widgetInfo;
-
-				// ---------------------------------------------------------------------------------------
-				//
 				PMString pMString_widgetValue = "";
+
+				// Button
 				InterfacePtr<IPMUnknown> IPMUnknown_button(iControlView, IID_IBUTTONATTRIBUTES);
 				if (IPMUnknown_button != nil)
 				{
-					pMString_widgetInfo.Append("Button");
+					pMString_widgetInfo.Append("<Button> ");
 
 					InterfacePtr<ITextControlData> iTextControlData(iControlView, ::UseDefaultIID());
 					if (iTextControlData != nil) pMString_widgetValue = iTextControlData->GetString();
 				}
 
-				InterfacePtr<IDialogController> iDialogController(iControlView, ::UseDefaultIID());
-				if (iDialogController != nil) pMString_widgetInfo.Append("Dialog");
-
-
+				// DropDownList
 				InterfacePtr<IDropDownListController> iDropDownListController(iControlView, ::UseDefaultIID());
-				if (iDropDownListController != nil) pMString_widgetInfo.Append("DropDownList");
+				if (iDropDownListController != nil)
+				{
+					pMString_widgetInfo.Append("<DropDownList> ");
 
+					InterfacePtr<IStringListControlData> iStringListControlData(iControlView, ::UseDefaultIID());
+					if (iStringListControlData != nil)
+					{
+						pMString_widgetValue = iStringListControlData->GetString(iDropDownListController->GetSelected());
+					}
+				}
+
+				// EditBox
+				InterfacePtr<IEditBoxAttributes> iEditBoxAttributes(iControlView, ::UseDefaultIID());
+				if (iEditBoxAttributes != nil) pMString_widgetInfo.Append("<EditBox>");
+
+				// Icon
+				InterfacePtr<IPNGIconAttributes> iPNGIconAttributes(iControlView, ::UseDefaultIID());
+				if (iPNGIconAttributes != nil) pMString_widgetInfo.Append("<Icon>");
+
+				// StaticText
 				InterfacePtr<IStaticTextAttributes> iStaticTextAttributes(iControlView, ::UseDefaultIID());
-				if (iStaticTextAttributes != nil) pMString_widgetInfo.Append("StaticText");
-
-				pMString_widgetInfo.Append(":");
+				if (iStaticTextAttributes != nil)
+				{
+					pMString_widgetInfo.Append("<StaticText> ");
+					InterfacePtr<ITextControlData> iTextControlData(iControlView, ::UseDefaultIID());
+					if (iTextControlData != nil) pMString_widgetValue = iTextControlData->GetString();
+				}
 
 				// WidgetValue
 				if (pMString_widgetValue != "")
 				{
-					pMString_widgetInfo.Append(" ");
-
 					// Translate
 					pMString_widgetValue.Translate();
 
@@ -237,23 +300,90 @@ void KESKBSIdleTask::QueryWidgetHierarchy(IPanelControlData* iPanelControlData, 
 					pMString_widgetInfo.Append(pMString_widgetValue);
 				}
 
-				pMString_widgetInfo.Append(" ");
-				PMString pMString_widgetID;
-				pMString_widgetID.AsNumber(widgetID.Get());
-				pMString_widgetInfo.Append(" , id:");
-				pMString_widgetInfo.Append(pMString_widgetID);
+				// ---------------------------------------------------------------------------------------
+				// kWidgetIDSpace
+				if (pMString_widgetInfo != "") pMString_widgetInfo.Append(" , ");
 
-				if (pMString_result != "") pMString_result.Append("\n");
-				pMString_result.Append(pMString_widgetInfo);
+				for (int32 i = 0; i < vector_pMString_widget.size(); i++)
+				{
+					if (widgetID.Get() == kKBSCEditorDlgPrefix + i)
+					{
+						pMString_widgetInfo.Append(vector_pMString_widget[i]);
+						pMString_widgetInfo.Append(" ");
+					}
+				}
+
+				if (pMString_widgetInfo != "")
+				{
+					PMString pMString_widgetID;
+					pMString_widgetID.AsNumber(widgetID.Get());
+					pMString_widgetInfo.Append(pMString_widgetID);
+
+					if (pMString_result != "") pMString_result.Append("\n");
+					pMString_result.Append(pMString_widgetInfo);
+				}
 
 				// continue
 				continue;
+			}
+			
+			// ---------------------------------------------------------------------------------------
+			// kWidgetIDSpace
+			for (int32 i = 0; i < vector_pMString_widget.size(); i++)
+			{
+				if (widgetID.Get() == kKBSCEditorDlgPrefix + i)
+				{
+					// Dialog
+					InterfacePtr<IDialogController> iDialogController(iControlView, ::UseDefaultIID());
+					if (iDialogController != nil)
+					{
+						pMString_widgetInfo.Append("<Dialog>");
+						pMString_widgetInfo.Append(" ");
+
+						PMString pMString_name;
+						iDialogController->GetName(pMString_name);
+
+						// Translate
+						pMString_name.Translate();
+						pMString_widgetInfo.Append(pMString_name);
+					}
+
+					// ListBox
+					InterfacePtr<IListBoxController> iListBoxController(iControlView, ::UseDefaultIID());
+					if (iListBoxController != nil)
+					{
+						pMString_widgetInfo.Append("<ListBox>");
+					}
+
+					if (pMString_widgetInfo != "")
+					{
+						pMString_widgetInfo.Append(" , ");
+						pMString_widgetInfo.Append(vector_pMString_widget[i]);
+						pMString_widgetInfo.Append(" ");
+
+						PMString pMString_widgetID;
+						pMString_widgetID.AsNumber(widgetID.Get());
+						pMString_widgetInfo.Append(pMString_widgetID);
+					}
+					else
+					{
+						pMString_widgetInfo.Append("<kWidgetIDSpace> ");
+						pMString_widgetInfo.Append(vector_pMString_widget[i]);
+					}
+				}
+			}
+
+			if (pMString_widgetInfo != "")
+			{
+				if (pMString_result != "") pMString_result.Append("\n");
+
+				pMString_result.Append(pMString_widgetInfo);
 			}
 
 			int32 length_lower = iPanelControlData_lower->Length();
 			if (length_lower > 0)
 			{
-				this->QueryWidgetHierarchy(iPanelControlData_lower, pMString_result);
+				this->QueryWidget(iPanelControlData_lower, pMString_result);
 			}
 		}
 	} while (false);

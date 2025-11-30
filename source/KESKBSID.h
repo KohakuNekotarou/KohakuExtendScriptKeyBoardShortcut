@@ -70,6 +70,7 @@ DECLARE_PMID(kImplementationIDSpace, kKESKBSIdleTaskImpl, kKESKBSPrefix + 3)
 DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutSetScriptImpl, kKESKBSPrefix + 4)
 DECLARE_PMID(kImplementationIDSpace, kKESKBSKeyBoardShortcutSetScriptProviderImpl, kKESKBSPrefix + 5)
 DECLARE_PMID(kImplementationIDSpace, kKESKBSOpenEditCloseShortcutDialogFlgDataImpl, kKESKBSPrefix + 6)
+DECLARE_PMID(kImplementationIDSpace, kKESKBSExportCurrentShortcutSetMethodScriptElement, kKESKBSPrefix + 7)
 
 // ActionIDs:
 DECLARE_PMID(kActionIDSpace, kKESKBSAboutActionID, kKESKBSPrefix + 0)
@@ -99,7 +100,7 @@ DECLARE_PMID(kScriptInfoIDSpace, kKESKBSKeyBoardShortcutSetObjectScriptElement, 
 #define kKESKBSKeyBoardShortcutSetsObject_CLSID { 0x46bf2be7, 0x9d39, 0x4299, { 0x88, 0x2a, 0x1f, 0xeb, 0xed, 0x53, 0xc7, 0x4a } }
 
 // enum
-typedef enum { kExportSet = 1, kWidgetHierarchy = 2} KESKBSOpenEditCloseShortcutDialogFlg;
+typedef enum { kExportSet = 1, kQueryWidget = 2} KESKBSOpenEditCloseShortcutDialogFlg;
 
 // "About Plug-ins" sub-menu:
 #define kKESKBSAboutMenuKey			kKESKBSStringPrefix "kKESKBSAboutMenuKey"

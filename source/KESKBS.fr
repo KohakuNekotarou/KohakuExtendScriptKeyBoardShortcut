@@ -265,12 +265,9 @@ resource VersionedScriptElementInfo(2)
 				// app.generalPreferences.keskbsSaveCurrentShortcutSetFile();
 				Method{ kKESKBSSaveCurrentShortcutSetFileMethodScriptElement },
 
-
-
-
-
-
-
+				// Export current key board shortcut set
+				// app.generalPreferences.keskbsExportCurrentShortcutSet();
+				Method{ kKESKBSExportCurrentShortcutSetMethodScriptElement },
 
 
 
@@ -331,6 +328,18 @@ resource VersionedScriptElementInfo(2)
 			VoidType,
 			{}
 		}
+
+		// Export current key board shortcut set
+		Method
+		{
+			kKESKBSExportCurrentShortcutSetMethodScriptElement,
+			e_KESKBSExportCurrentShortcutSet,
+			"KESKBS export current shortcut set",
+			"KESKBS export current shortcut set.",
+			VoidType,
+			{}
+		}
+
 
 
 
