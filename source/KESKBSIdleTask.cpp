@@ -26,8 +26,13 @@
 // Interface includes.
 #include "IApplication.h"
 #include "IDialog.h"
+#include "IDialogController.h"
 #include "IDialogMgr.h"
+#include "IDropDownListController.h"
 #include "IIdleTaskMgr.h"
+#include "IMenuUtils.h"
+#include "ITextControlData.h"
+#include "IStaticTextAttributes.h"
 
 
 #include "IIntData.h"
@@ -54,6 +59,9 @@
 #include "CIdleTask.h"
 #include "CAlert.h" // CAlert::InformationAlert(Msg);
 
+
+#include "LocaleSetting.h"
+
 // Project includes.
 #include "KESKBSID.h"
 
@@ -71,7 +79,7 @@ private:
 
 	void kKBSCQueryEditorDialogWidgetHierarchy(IWindow* iWindow);
 
-	void QueryWidgetHierarchy(IPanelControlData* iPanelControlData, PMString pMString_hierarchy, PMString& pMString_result);
+	void QueryWidgetHierarchy(IPanelControlData* iPanelControlData, PMString& pMString_result);
 };
 
 CREATE_PMINTERFACE(KESKBSIdleTask, kKESKBSIdleTaskImpl)
@@ -162,62 +170,20 @@ void KESKBSIdleTask::kKBSCQueryEditorDialogWidgetHierarchy(IWindow* iWindow)
 		// ---------------------------------------------------------------------------------------
 		// 
 		PMString pMString_result;
-		this->QueryWidgetHierarchy(iPanelControlData, "", pMString_result);
+		this->QueryWidgetHierarchy(iPanelControlData, pMString_result);
 
 		CAlert::InformationAlert(pMString_result);
 
 	} while (false);
 }
 
-void KESKBSIdleTask::QueryWidgetHierarchy(
-	IPanelControlData* iPanelControlData, PMString pMString_hierarchy, PMString& pMString_result)
+void KESKBSIdleTask::QueryWidgetHierarchy(IPanelControlData* iPanelControlData, PMString& pMString_result)
 {
-	// WidgetId
-	std::vector<PMString> vector_pMString_kBSCEditorWidgetId = {
-		"",
-		"kKBSCEditorDlgId", // kKBSCEditorDlgPrefix + 1
-		"kKBSCActionsListWidgetId",
-		"kKBSCShortcutsListWidgetId",
-		"kKBSCShortcutEditBoxWidgetId",
-		"kKBSCCurrentActionTextWidgetId",
-		"kKBSCAssignButtonWidgetId",
-		"kKBSCAreaRowWidgetId",
-		"kKBSCSetsComboWidgetId",
-		"kKBSCProductAreasComboWidgetId",
-		"kKBSCDuplicateButtonWidgetId",
-		"kKBSCDeleteButtonWidgetId",
-		"kKBSCSaveButtonWidgetId",
-		"kKBSCExportButtonWidgetId",
-		"kKBSCDuplicateDlgId",
-		"kKBSCNewNameEditBoxWidgetId",
-		"kKBSCBasedOnComboWidgetId",
-		"kKBSCSetLabelWidgetId",
-		"kProductAreaLabelWidgetId",
-		"kCommandsLabelWidgetId",
-		"kKBSCGroupWidgetId",
-		"kPressLabelWidgetId",
-		"kCurrentLabelWidgetId",
-		"kKBSCGroup2WidgetId",
-		"kNameLabelWidgetId",
-		"kBasedOnLabelWidgetId",
-		"kKBSCRemoveButtonWidgetId",
-		"kKBSCContextListWidgetID",
-		"kContextLabelWidgetID",
-		"kKBSCPsIconWidgetID",
-		"kKBSCAiIconWidgetID",
-		"kPsAiIconPanelWidgetID",
-	};
-
 	do
 	{
 		int32 length = iPanelControlData->Length();
 		for (int32 i = 0; i < length; i++)
 		{
-			PMString pMString_number;
-			pMString_number.AsNumber(i);
-			PMString pMString_hierarchy_lower = pMString_hierarchy;
-			pMString_hierarchy_lower.Append(pMString_number);
-
 			// ---------------------------------------------------------------------------------------
 			// 
 			IControlView* iControlView = iPanelControlData->GetWidget(i);
@@ -225,29 +191,69 @@ void KESKBSIdleTask::QueryWidgetHierarchy(
 
 			WidgetID widgetID = iControlView->GetWidgetID();
 
-			for (int32 ii = 0; ii < vector_pMString_kBSCEditorWidgetId.size(); ii++)
-			{
-				if (widgetID.Get() == kKBSCEditorDlgPrefix + ii)
-				{
-					PMString pMString_widgetInfo = pMString_hierarchy_lower;
-					pMString_widgetInfo.Append(" ");
-					pMString_widgetInfo.Append(vector_pMString_kBSCEditorWidgetId[ii]);
-
-					if(pMString_result != "") pMString_result.Append("\n");
-					pMString_result.Append(pMString_widgetInfo);
-				}
-			}
-
 			// ---------------------------------------------------------------------------------------
-			// 
+			// Query widget
 			InterfacePtr<IPanelControlData> iPanelControlData_lower(iControlView, ::UseDefaultIID());
-			if (iPanelControlData_lower == nil) continue;
+			if (iPanelControlData_lower == nil) { // nil
+
+				PMString pMString_widgetInfo;
+
+				// ---------------------------------------------------------------------------------------
+				//
+				PMString pMString_widgetValue = "";
+				InterfacePtr<IPMUnknown> IPMUnknown_button(iControlView, IID_IBUTTONATTRIBUTES);
+				if (IPMUnknown_button != nil)
+				{
+					pMString_widgetInfo.Append("Button");
+
+					InterfacePtr<ITextControlData> iTextControlData(iControlView, ::UseDefaultIID());
+					if (iTextControlData != nil) pMString_widgetValue = iTextControlData->GetString();
+				}
+
+				InterfacePtr<IDialogController> iDialogController(iControlView, ::UseDefaultIID());
+				if (iDialogController != nil) pMString_widgetInfo.Append("Dialog");
+
+
+				InterfacePtr<IDropDownListController> iDropDownListController(iControlView, ::UseDefaultIID());
+				if (iDropDownListController != nil) pMString_widgetInfo.Append("DropDownList");
+
+				InterfacePtr<IStaticTextAttributes> iStaticTextAttributes(iControlView, ::UseDefaultIID());
+				if (iStaticTextAttributes != nil) pMString_widgetInfo.Append("StaticText");
+
+				pMString_widgetInfo.Append(":");
+
+				// WidgetValue
+				if (pMString_widgetValue != "")
+				{
+					pMString_widgetInfo.Append(" ");
+
+					// Translate
+					pMString_widgetValue.Translate();
+
+					// StripMenuAccelerator
+					Utils<IMenuUtils>()->StripMenuAccelerator(
+						&pMString_widgetValue, LocaleSetting::GetLocale().GetUserInterfaceId()
+					);
+					pMString_widgetInfo.Append(pMString_widgetValue);
+				}
+
+				pMString_widgetInfo.Append(" ");
+				PMString pMString_widgetID;
+				pMString_widgetID.AsNumber(widgetID.Get());
+				pMString_widgetInfo.Append(" , id:");
+				pMString_widgetInfo.Append(pMString_widgetID);
+
+				if (pMString_result != "") pMString_result.Append("\n");
+				pMString_result.Append(pMString_widgetInfo);
+
+				// continue
+				continue;
+			}
 
 			int32 length_lower = iPanelControlData_lower->Length();
 			if (length_lower > 0)
 			{
-				pMString_hierarchy_lower.Append(":");
-				this->QueryWidgetHierarchy(iPanelControlData_lower, pMString_hierarchy_lower, pMString_result);
+				this->QueryWidgetHierarchy(iPanelControlData_lower, pMString_result);
 			}
 		}
 	} while (false);

@@ -109,6 +109,7 @@ ErrorCode KESKBSScriptProvider::HandleMethod(ScriptID scriptID, IScriptRequestDa
 
 	// test /////////////////////////////////////////////////////////////
 	case e_KESKBSGetNumSets:
+		//result = this->OpenEditCloseShortcutDialog(KESKBSOpenEditCloseShortcutDialogFlg::kExportSet);
 		result = this->OpenEditCloseShortcutDialog(KESKBSOpenEditCloseShortcutDialogFlg::kWidgetHierarchy);
 		break;
 
